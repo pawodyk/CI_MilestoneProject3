@@ -1,3 +1,14 @@
+@import url('https://fonts.googleapis.com/css?family=Courgette|Merriweather+Sans:300,400,700&display=swap');
+
+body {
+    font-family: "Merriweather Sans", Helvetica, Arial, sans-serif;
+}
+
+.navbar-brand {
+    font-family: "Courgette", sans-serif;
+    color: var(--primary) !important;
+}
+
 .bg-darkglass {
     background-color: rgba(20, 20, 20, 0.5);
 }
