@@ -11,7 +11,7 @@
     {% for recipe in recipes_list %}
 
     <div class="col-12 col-lg-6 p-2">
-      <a href="">
+      <a href="{{ url_for('display_recipe', recipe_id=recipe._id) }}">
         <div class="card bg-dark text-light d-flex align-items-end" style="height: 400px;">
         <img src="{{ url_for('static', filename='img/{0}'.format(recipe.picture)) }}" class="card-img h-100" alt="picture of {{recipe.name}}" style="object-fit: cover;">
         <div class="card-img-overlay overflow-auto align-items-start flex-column h-100">
@@ -27,7 +27,7 @@
     {% endfor %}
 
     <div class="d-flex justify-content-end w-100 mx-2">
-      <button type="button" class="btn btn-success px-3">Add Recepie + </button>
+      <button type="button" class="btn btn-success px-3">Add Recipe + </button>
     </div>
   </div>
 </div>

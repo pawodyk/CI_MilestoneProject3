@@ -1,0 +1,80 @@
+{% extends 'base.html' %} {% block content %}
+
+<div class="fluid-container">
+
+    <div class="jumbotron p-4 p-md-5 text-white rounded banner-image d-flex pt-lg-10 " style="background-image: url( {{ url_for('static', filename='img/{}'.format(recipe.picture)) }} );">
+        <div class="col-md-8 p-2 bg-darkglass">
+            <h1 class="display-4 font-italic">{{ recipe.name }}</h1>
+            <p class="lead my-3">{{ recipe.description }}</p>
+        </div>
+    </div>
+
+</div>
+
+<main role="main" class="container">
+    <div class="row">
+
+        <aside class="col-md-4 blog-sidebar">
+            <div class="p-4 mb-3 bg-light rounded">
+                <h4 class="font-italic">Ingredients:</h4>
+                <ul>
+                    {% for item in recipe.ingredients %}
+                    <li>{{item.amount}}&nbsp;{{item.units}} - {{item.ingredient_name}}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </aside>
+        <!-- /.blog-sidebar -->
+
+        <div class="col-md-8 blog-main">
+
+
+            <div class="row">
+                <h1 class="pb-4 mb-4 font-italic border-bottom">
+                    {{ recipe.name }}
+                </h1>
+            </div>
+
+            <div class="row">
+
+            </div>
+
+            <div class="row">
+                <div class="blog-post">
+                    <ol>
+                        {% for step in recipe.preperation%}
+                        <li class="pb-2">{{step}}</li>
+                        {% endfor%}
+                    </ol>
+
+                </div>
+            </div>
+
+
+        </div>
+
+    </div>
+
+
+    <div class="row my-2">
+        {% for review in recipe.reviews %}
+        <div class="col-md-6">
+            <div class="row border rounded overflow-hidden m-3 shadow-sm ">
+                <div class="col-12 col-sm-8 p-3 d-flex flex-column position-static">
+                    <div class="d-inline-block mb-2 text-primary">
+                        {% if review.rating != null%} {% for star in range( review.rating ) %}
+                        <i class="fas fa-utensil-spoon"></i> {% endfor %} {% endif %}
+                    </div>
+                    <h3 class="mb-0 text-capitalize">{{review.name}}</h3>
+                    <div class="mb-1 text-muted">12/02/18</div>
+                    <p class="card-text mb-auto">{{review.description}}</p>
+                </div>
+                <div class="col-sm-4 pr-2 d-none d-sm-flex justify-content-end align-items-center">
+                    <img src="{{ url_for('static', filename='img/{}'.format(recipe.picture)) }}" alt="" class="rounded-circle img-thumbnail user-image">
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</main>
+{% endblock %}

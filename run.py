@@ -26,6 +26,14 @@ def recipes():
     return render_template('recipes.html', 
                             title="Open Cookbook | Recipes",
                             recipes_list=mongo.db.recipes.find())
+
+@app.route("/recipes/<recipe_id>")
+def display_recipe(recipe_id):
+    recipe = {}
+    recipe = mongo.db.recipes.find_one({'_id':ObjectId(recipe_id)})
+    return render_template('recipe.html',
+                            title='Open Cookbook | ' + recipe["name"],
+                            recipe=recipe)
                             
 
 # recipe = mongo.db.recipes.find_one()
