@@ -25,7 +25,23 @@ body {
     height: 100px;
 }
 
-@media (min-width: 992px) {
+.switch {
+    display: flex;
+    justify-content: flex-start;
+}
+
+/* Small devices (landscape phones, 576px and up) */
+@media (min-width: 576px) { 
+    .switch {
+        justify-content: center;
+    }
+}
+
+/* Medium devices (tablets, 768px and up) */
+@media (min-width: 768px) { }
+
+/* Large devices (desktops, 992px and up) */
+@media (min-width: 992px) { 
     .pt-lg-10 {
         padding-top: 10em !important;
     }
@@ -38,5 +54,8 @@ body {
     .pl-lg-10 {
         padding-left: 10em !important;
     }
-
+    
 }
+
+/* Extra large devices (large desktops, 1200px and up) */
+@media (min-width: 1200px) { }

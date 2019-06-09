@@ -1,0 +1,240 @@
+{% extends 'base.html' %} {% block content %}
+
+
+<div class="container my-3">
+  <h1>Add Recipe</h1>
+  <p>Welcome and thank you for taking your time to share your recepies</p>
+  <form method="POST" action="{{ url_for('post_recipe') }}">
+    <div class="form-row mb-3">
+      <div class="col-12 col-sm-8 mb-3">
+        <input type="text" class="form-control form-control-lg" id="recipe_name" name="name" placeholder="The name of your recepie" required>
+      </div>
+      <div class="col-12 col-sm-4 mb-3">
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text" id="addon-wrapping">By</span>
+          </div>
+          <input type="text" class="form-control form-control-lg" id="recipe_author" name="author" placeholder="Your Name" required>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-row mb-4">
+      <div class="col-6 pr-md-5">
+        <label for="">Category</label>
+        <select id="recipe_category" name="category" class="custom-select" required>
+            <option disabled selected>Please select the category</option>
+            <option value="5cf90c261c9d4400000393d0">Dessert</option>
+            <option value="5cf90c371c9d4400000393d1">Main</option>
+            <option value="5cf90c481c9d4400000393d2">Starter</option>
+          </select>
+      </div>
+      <div class="col-6 pl-md-5">
+        <label for="">Cuisine</label>
+        <select id="recipe_cuisine" name="cuisine" class="custom-select" required>
+              <option disabled selected>Please select the cuisine</option>
+              <option value="5cf903ef1c9d440000a2c8d9">Italian</option>
+              <option value="5cfd24a51c9d4400007a647d">Chinese</option>
+            </select>
+      </div>
+    </div>
+    <div class="form-row mb-4">
+      <div class="col-12 col-md-8 offset-md-2 mb-3">
+        <textarea class="form-control" id="recipe_desc" name="description" rows="3" placeholder="Short description of your recipe"></textarea>
+      </div>
+    </div>
+
+
+    <div class="border mb-4 p-3 px-lg-5 rounded shadow-sm">
+      <div class="form-row border-bottom">
+        <div class="col-12 col-sm-4 form-group">
+          <label for="recipe_prep_time">Preperation Time</label>
+          <div class="input-group">
+            <input type="text" class="form-control" id="recipe_prep_time" name="prep_time" placeholder="" required>
+            <div class="input-group-append">
+              <span class="input-group-text">min</span>
+            </div>
+          </div>
+        </div>
+        <div class="col-12 col-sm-4 form-group">
+          <label for="recipe_servings">Servings</label>
+          <div class="input-group">
+            <input type="text" class="form-control" id="recipe_servings" name="servings" placeholder="" required>
+            <div class="input-group-append">
+              <span class="input-group-text">portions</span>
+            </div>
+          </div>
+        </div>
+        <div class="col-12 col-sm-4 form-group">
+          <label for="">Calories</label>
+          <div class="input-group">
+            <input type="text" class="form-control" id="recipe_calories" name="calories" placeholder="" required>
+            <div class="input-group-append">
+              <span class="input-group-text">cal.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="form-row my-3">
+        <div class="col-12 col-sm-4 switch">
+          <div class="custom-control custom-switch">
+            <input type="checkbox" class="custom-control-input" id="recipe_vegi" name="is_vegiterian" value="True">
+            <label class="custom-control-label" for="recipe_vegi">Vegiterian</label>
+          </div>
+        </div>
+        <div class="col-12 col-sm-4 switch">
+          <div class="custom-control custom-switch">
+            <input type="checkbox" class="custom-control-input" id="recipe_lact" name="has_lactose" value="True">
+            <label class="custom-control-label" for="recipe_lact">Contain Lactose</label>
+          </div>
+        </div>
+        <div class="col-12 col-sm-4 switch">
+          <div class="custom-control custom-switch">
+            <input type="checkbox" class="custom-control-input" id="recipe_glut" name="has_gluten" value="True">
+            <label class="custom-control-label" for="recipe_glut">Contain Gluten</label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="border mb-4 p-3 rounded shadow-sm">
+      <div class="form-row mb-1">
+        <div class="col-12 col-sm-6 form-group">
+          <label for="ingredient0_name">Ingredient<span class="d-none d-sm-inline">'s Name</span></label>
+          <input type="text" class="form-control" id="ingredient0_name" name="ingredient0_name" placeholder="Spaghetti">
+        </div>
+        <div class="col-12 col-sm-6 form-group">
+          <label class="d-none d-sm-block" for="ingredient0_amount">Amount</label>
+          <div class="input-group">
+            <input type="number" class="form-control" aria-label="Text input with dropdown button" id="ingredient0_amount" name="ingredient0_amount" placeholder="500">
+            <div class="input-group-append">
+              <select class="custom-select btn" name="ingredient0_unit" id="ingredient0_unit">
+                  <option>g</option>
+                  <option>mg</option>
+                  <option>kg</option>
+                  <option>ml</option>
+                  <option>l</option>
+                  <option>t. spoon</option>
+                  <option>tb. spoon</option>
+                  <option>glass</option>
+            </select>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="form-row mb-1">
+        <div class="col-12 col-sm-6 form-group">
+          <label for="ingredient1_name">Ingredient<span class="d-none d-sm-inline">'s Name</span></label>
+          <input type="text" class="form-control" id="ingredient1_name" name="ingredient1_name" placeholder="Spaghetti">
+        </div>
+        <div class="col-12 col-sm-6 form-group">
+          <label class="d-none d-sm-block" for="ingredient1_amount">Amount</label>
+          <div class="input-group">
+            <input type="number" class="form-control" aria-label="Text input with dropdown button" id="ingredient1_amount" name="ingredient1_amount" placeholder="500">
+            <div class="input-group-append">
+              <select class="custom-select btn" name="ingredient1_unit" id="ingredient1_unit">
+                  <option>g</option>
+                  <option>mg</option>
+                  <option>kg</option>
+                  <option>ml</option>
+                  <option>l</option>
+                  <option>t. spoon</option>
+                  <option>tb. spoon</option>
+                  <option>glass</option>
+            </select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-row mb-1">
+        <div class="col-12 col-sm-6 form-group">
+          <label for="ingredient2_name">Ingredient<span class="d-none d-sm-inline">'s Name</span></label>
+          <input type="text" class="form-control" id="ingredient2_name" name="ingredient2_name" placeholder="Spaghetti">
+        </div>
+        <div class="col-12 col-sm-6 form-group">
+          <label class="d-none d-sm-block" for="ingredient2_amount">Amount</label>
+          <div class="input-group">
+            <input type="number" class="form-control" aria-label="Text input with dropdown button" id="ingredient2_amount" name="ingredient2_amount" placeholder="500">
+            <div class="input-group-append">
+              <select class="custom-select btn" name="ingredient2_unit" id="ingredient2_unit">
+                  <option>g</option>
+                  <option>mg</option>
+                  <option>kg</option>
+                  <option>ml</option>
+                  <option>l</option>
+                  <option>t. spoon</option>
+                  <option>tb. spoon</option>
+                  <option>glass</option>
+            </select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="col-12 my-3 ">
+          <button class="btn btn-success px-3 shadow-sm" id="btn-add-ingredient" type="button">add another ingredient</button>
+        </div>
+      </div>
+    </div>
+
+
+    <p>Please add steps for making your dish</p>
+
+    <div class="form-row">
+      <div class="col-12 mb-2">
+        <div class="input-group form-group">
+          <div class="input-group-prepend">
+            <label for="recipe_step_1" class="input-group-text">1</label>
+          </div>
+          <textarea class="form-control" id="recipe_step_1" name="recipe_step_1" rows="1"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="col-12 mb-2">
+        <div class="input-group form-group">
+          <div class="input-group-prepend">
+            <label for="recipe_step_2" class="input-group-text">2</label>
+          </div>
+          <textarea class="form-control" id="recipe_step_2" name="recipe_step_2" rows="1"></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-2">
+        <div class="input-group form-group">
+          <div class="input-group-prepend">
+            <label for="recipe_step_3" class="input-group-text">3</label>
+          </div>
+          <textarea class="form-control" id="recipe_step_3" name="recipe_step_3" rows="1"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <button class="btn btn-success px-2 shadow-sm" id="btn-add-step" type="button">add another step</button>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="col-12 col-md-6 offset-md-3 input-group py-3">
+        <div class="custom-file">
+          <input type="file" class="custom-file-input" id="customFile" disabled>
+          <label class="custom-file-label" for="customFile">Choose file</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <button class="btn btn-primary my-3 py-3 px-sm-5 mx-auto shadow" type="submit">Submit Recipe</button>
+    </div>
+
+  </form>
+</div>
+
+{% endblock%}
