@@ -58,9 +58,9 @@
 
   <div class="row my-2">
     {% for review in recipe.reviews %}
-    <div class="col-md-6">
+    <div class="col-12 col-md-6">
       <div class="row border rounded overflow-hidden m-3 shadow-sm ">
-        <div class="col-12 col-sm-8 p-3 d-flex flex-column position-static">
+        <div class="col-12 col-sm-8 col-md-12 col-lg-8 p-3 d-flex flex-column position-static">
 
           <h3 class="mb-0 text-capitalize">{{review.name}}</h3>
           <div class="mb-1 text-muted">12/02/18</div>
@@ -71,7 +71,7 @@
           </div>
         </div>
 
-        <div class="col-sm-4 pr-2 d-none d-sm-flex justify-content-end align-items-center">
+        <div class="col-4 pr-2 d-none d-sm-flex d-md-none d-lg-flex justify-content-end align-items-center">
           <img src="{{ url_for('static', filename='img/{}'.format(recipe.picture)) }}" alt="" class="rounded-circle img-thumbnail user-image">
         </div>
       </div>
