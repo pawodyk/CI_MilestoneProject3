@@ -5,7 +5,7 @@ from bson.objectid import ObjectId
 
 
 app = Flask(__name__)
-app.config["MONGO_DBNAME"] = os.getenv('MONGO_DBNAME')
+app.config["MONGO_DBNAME"] = os.getenv('MONGO_DBNAME', 'cookbook')
 app.config["MONGO_URI"] = os.getenv('MONGO_URI', 'mongodb://localhost:27017/cookbook')
 
 mongo = PyMongo(app)
@@ -102,6 +102,6 @@ def post_recipe():
 
 
 if __name__ == "__main__":    
-    app.run(host=os.getenv('IP', '127.0.0.1'), 
-            port=int(os.getenv('PORT', "5000")), 
+    app.run(host=os.environ.get('IP', '127.0.0.1'), 
+            port=int(os.environ.get('PORT', 5000)), 
             debug=True)
