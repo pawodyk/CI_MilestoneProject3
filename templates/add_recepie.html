@@ -134,42 +134,42 @@
       </div>
     </div>
 
-      <p>Please add steps for making your dish</p>
-      <div class="steps_list">
-        <div class="form-row" id="step1">
-          <div class="col-12 mb-2">
-            <div class="input-group form-group">
-              <div class="input-group-prepend">
-                <label for="recipe_step_1" class="input-group-text">Step 1</label>
-              </div>
-              <textarea class="form-control" id="recipe_step_1" name="recipe_step_1" rows="1" required></textarea>
+    <p>Please add steps for making your dish</p>
+    <div class="steps_list">
+      <div class="form-row" id="step1">
+        <div class="col-12 mb-2">
+          <div class="input-group form-group">
+            <div class="input-group-prepend">
+              <label for="recipe_step_1" class="input-group-text">Step 1</label>
             </div>
+            <textarea class="form-control" id="recipe_step_1" name="recipe_step_1" rows="1" required></textarea>
           </div>
         </div>
       </div>
+    </div>
 
-      <div class="form-row">
-        <div class="col-12 mb-3 button-group">
-          <button class="btn btn-success px-2 mb-2 shadow-sm" id="btn-add-step" type="button">add another step</button>
-          <button class="btn btn-danger px-2 mb-2 shadow-sm" id="btn-rm-step" type="button">remove last step</button>
-          <input type="number" id="steps-counter" name="steps_counter" value="1" hidden/>
+    <div class="form-row">
+      <div class="col-12 mb-3 button-group">
+        <button class="btn btn-success px-2 mb-2 shadow-sm" id="btn-add-step" type="button">add another step</button>
+        <button class="btn btn-danger px-2 mb-2 shadow-sm" id="btn-rm-step" type="button">remove last step</button>
+        <input type="number" id="steps-counter" name="steps_counter" value="1" hidden/>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="col-12 col-md-6 offset-md-3 input-group py-3">
+        <div class="custom-file">
+          <input type="file" class="custom-file-input" id="customFile" disabled>
+          <label class="custom-file-label" for="customFile">Choose file</label>
         </div>
       </div>
+    </div>
 
-      <div class="form-row">
-        <div class="col-12 col-md-6 offset-md-3 input-group py-3">
-          <div class="custom-file">
-            <input type="file" class="custom-file-input" id="customFile" disabled>
-            <label class="custom-file-label" for="customFile">Choose file</label>
-          </div>
-        </div>
-      </div>
-
-      <div class="form-row">
-        <button class="btn btn-primary my-3 py-3 px-sm-5 mx-auto shadow" type="submit">Submit Recipe</button>
-      </div>
+    <div class="form-row">
+      <button class="btn btn-primary my-3 py-3 px-sm-5 mx-auto shadow" type="submit">Submit Recipe</button>
+    </div>
 
   </form>
-  </div>
+</div>
 
-  {% endblock%}
+{% endblock%}
