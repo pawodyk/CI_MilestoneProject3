@@ -41,18 +41,50 @@ body {
     font-size: 0.9em;
 }
 
+.sidebar {
+    font-size: 0.9em;
+    font-style: italic;
+}
+
+.sidebar ul {
+    padding-left: 1em;
+}
+
+.sidebar li {
+    padding-left: 0;
+    list-style-type: none;
+}
+
+.recipe-header h1 {
+    font-size: 2.5rem;
+    font-weight: 300;
+}
+
 /* Small devices (landscape phones, 576px and up) */
-@media (min-width: 576px) { 
+
+@media (min-width: 576px) {
     .switch {
         justify-content: center;
+    }
+
+    .recipe-header h1 {
+        font-size: 4rem;
+        font-weight: 300;
+        line-height: 1.2;
     }
 }
 
 /* Medium devices (tablets, 768px and up) */
-@media (min-width: 768px) { }
+
+@media (min-width: 768px) {
+    .banner-image {
+        min-height: 50vh;
+    }
+}
 
 /* Large devices (desktops, 992px and up) */
-@media (min-width: 992px) { 
+
+@media (min-width: 992px) {
     .pt-lg-10 {
         padding-top: 10em !important;
     }
@@ -65,8 +97,9 @@ body {
     .pl-lg-10 {
         padding-left: 10em !important;
     }
-    
+
 }
 
 /* Extra large devices (large desktops, 1200px and up) */
-@media (min-width: 1200px) { }
+
+@media (min-width: 1200px) {}
