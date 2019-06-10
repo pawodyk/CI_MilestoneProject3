@@ -97,18 +97,19 @@
       </div>
     </div>
 
-    <div class="border mb-4 p-3 rounded shadow-sm">
-      <div class="form-row mb-1">
-        <div class="col-12 col-sm-6 form-group">
-          <label for="ingredient0_name">Ingredient<span class="d-none d-sm-inline">'s Name</span></label>
-          <input type="text" class="form-control" id="ingredient0_name" name="ingredient0_name" placeholder="Spaghetti">
-        </div>
-        <div class="col-12 col-sm-6 form-group">
-          <label class="d-none d-sm-block" for="ingredient0_amount">Amount</label>
-          <div class="input-group">
-            <input type="number" class="form-control" aria-label="Text input with dropdown button" id="ingredient0_amount" name="ingredient0_amount" placeholder="500">
-            <div class="input-group-append">
-              <select class="custom-select btn" name="ingredient0_unit" id="ingredient0_unit">
+    <div class="border mb-4 p-3 rounded shadow-sm bg-light">
+      <div id="ingredient-list">
+        <div class="form-row mb-1" id="ingredient1">
+          <div class="col-12 col-sm-6 form-group">
+            <label for="ingredient1_name">Ingredient<span class="d-none d-sm-inline">'s Name</span></label>
+            <input type="text" class="form-control" id="ingredient1_name" name="ingredient1_name" placeholder="eg. Spaghetti" required>
+          </div>
+          <div class="col-12 col-sm-6 form-group">
+            <label class="d-none d-sm-block" for="ingredient1_amount">Amount</label>
+            <div class="input-group">
+              <input type="number" class="form-control" aria-label="Text input with dropdown button" id="ingredient1_amount" name="ingredient1_amount" placeholder="eg. 500" required>
+              <div class="input-group-append">
+                <select class="custom-select btn" name="ingredient1_unit" id="ingredient1_unit">
                   <option>g</option>
                   <option>mg</option>
                   <option>kg</option>
@@ -117,124 +118,58 @@
                   <option>t. spoon</option>
                   <option>tb. spoon</option>
                   <option>glass</option>
-            </select>
+                </select>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-      
-      <div class="form-row mb-1">
-        <div class="col-12 col-sm-6 form-group">
-          <label for="ingredient1_name">Ingredient<span class="d-none d-sm-inline">'s Name</span></label>
-          <input type="text" class="form-control" id="ingredient1_name" name="ingredient1_name" placeholder="Spaghetti">
-        </div>
-        <div class="col-12 col-sm-6 form-group">
-          <label class="d-none d-sm-block" for="ingredient1_amount">Amount</label>
-          <div class="input-group">
-            <input type="number" class="form-control" aria-label="Text input with dropdown button" id="ingredient1_amount" name="ingredient1_amount" placeholder="500">
-            <div class="input-group-append">
-              <select class="custom-select btn" name="ingredient1_unit" id="ingredient1_unit">
-                  <option>g</option>
-                  <option>mg</option>
-                  <option>kg</option>
-                  <option>ml</option>
-                  <option>l</option>
-                  <option>t. spoon</option>
-                  <option>tb. spoon</option>
-                  <option>glass</option>
-            </select>
-            </div>
-          </div>
-        </div>
-      </div>
 
-      <div class="form-row mb-1">
-        <div class="col-12 col-sm-6 form-group">
-          <label for="ingredient2_name">Ingredient<span class="d-none d-sm-inline">'s Name</span></label>
-          <input type="text" class="form-control" id="ingredient2_name" name="ingredient2_name" placeholder="Spaghetti">
+        <div class="form-row">
+          <div class="col-12 my-3 button-group">
+            <button class="btn btn-success px-3 mb-2 shadow-sm" id="btn-add-ingredient" type="button">add another ingredient</button>
+            <button class="btn btn-danger px-3 mb-2 shadow-sm" id="btn-rm-ingredient" type="button">remove last ingredient</button>
+            <input type="number" id="ingredient-counter" name="ingredient_counter" value="1" hidden/>
+          </div>
         </div>
-        <div class="col-12 col-sm-6 form-group">
-          <label class="d-none d-sm-block" for="ingredient2_amount">Amount</label>
-          <div class="input-group">
-            <input type="number" class="form-control" aria-label="Text input with dropdown button" id="ingredient2_amount" name="ingredient2_amount" placeholder="500">
-            <div class="input-group-append">
-              <select class="custom-select btn" name="ingredient2_unit" id="ingredient2_unit">
-                  <option>g</option>
-                  <option>mg</option>
-                  <option>kg</option>
-                  <option>ml</option>
-                  <option>l</option>
-                  <option>t. spoon</option>
-                  <option>tb. spoon</option>
-                  <option>glass</option>
-            </select>
+      </div>
+    </div>
+
+      <p>Please add steps for making your dish</p>
+      <div class="steps_list">
+        <div class="form-row" id="step1">
+          <div class="col-12 mb-2">
+            <div class="input-group form-group">
+              <div class="input-group-prepend">
+                <label for="recipe_step_1" class="input-group-text">Step 1</label>
+              </div>
+              <textarea class="form-control" id="recipe_step_1" name="recipe_step_1" rows="1" required></textarea>
             </div>
           </div>
         </div>
       </div>
 
       <div class="form-row">
-        <div class="col-12 my-3 ">
-          <button class="btn btn-success px-3 shadow-sm" id="btn-add-ingredient" type="button">add another ingredient</button>
+        <div class="col-12 mb-3 button-group">
+          <button class="btn btn-success px-2 mb-2 shadow-sm" id="btn-add-step" type="button">add another step</button>
+          <button class="btn btn-danger px-2 mb-2 shadow-sm" id="btn-rm-step" type="button">remove last step</button>
+          <input type="number" id="steps-counter" name="steps_counter" value="1" hidden/>
         </div>
       </div>
-    </div>
 
-
-    <p>Please add steps for making your dish</p>
-
-    <div class="form-row">
-      <div class="col-12 mb-2">
-        <div class="input-group form-group">
-          <div class="input-group-prepend">
-            <label for="recipe_step_1" class="input-group-text">1</label>
+      <div class="form-row">
+        <div class="col-12 col-md-6 offset-md-3 input-group py-3">
+          <div class="custom-file">
+            <input type="file" class="custom-file-input" id="customFile" disabled>
+            <label class="custom-file-label" for="customFile">Choose file</label>
           </div>
-          <textarea class="form-control" id="recipe_step_1" name="recipe_step_1" rows="1"></textarea>
         </div>
       </div>
-    </div>
 
-    <div class="form-row">
-      <div class="col-12 mb-2">
-        <div class="input-group form-group">
-          <div class="input-group-prepend">
-            <label for="recipe_step_2" class="input-group-text">2</label>
-          </div>
-          <textarea class="form-control" id="recipe_step_2" name="recipe_step_2" rows="1"></textarea>
-        </div>
+      <div class="form-row">
+        <button class="btn btn-primary my-3 py-3 px-sm-5 mx-auto shadow" type="submit">Submit Recipe</button>
       </div>
-    </div>
-    <div class="form-row">
-      <div class="col-12 mb-2">
-        <div class="input-group form-group">
-          <div class="input-group-prepend">
-            <label for="recipe_step_3" class="input-group-text">3</label>
-          </div>
-          <textarea class="form-control" id="recipe_step_3" name="recipe_step_3" rows="1"></textarea>
-        </div>
-      </div>
-    </div>
-
-    <div class="form-row">
-      <div class="col-12 mb-3">
-        <button class="btn btn-success px-2 shadow-sm" id="btn-add-step" type="button">add another step</button>
-      </div>
-    </div>
-
-    <div class="form-row">
-      <div class="col-12 col-md-6 offset-md-3 input-group py-3">
-        <div class="custom-file">
-          <input type="file" class="custom-file-input" id="customFile" disabled>
-          <label class="custom-file-label" for="customFile">Choose file</label>
-        </div>
-      </div>
-    </div>
-
-    <div class="form-row">
-      <button class="btn btn-primary my-3 py-3 px-sm-5 mx-auto shadow" type="submit">Submit Recipe</button>
-    </div>
 
   </form>
-</div>
+  </div>
 
-{% endblock%}
+  {% endblock%}

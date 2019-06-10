@@ -30,6 +30,17 @@ body {
     justify-content: flex-start;
 }
 
+.button-group {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+}
+
+.button-group button {
+    width: 200px;
+    font-size: 0.9em;
+}
+
 /* Small devices (landscape phones, 576px and up) */
 @media (min-width: 576px) { 
     .switch {

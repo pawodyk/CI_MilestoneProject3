@@ -47,15 +47,19 @@ def post_recipe():
     
     ingredients = []
     steps = []
-
-    for i in range(0,3):
+    
+    ## TODO ##
+    ingredients_num = int( request.form['ingredient_counter'] )
+    for i in range(1, ingredients_num + 1):
         ingredient = {} 
         ingredient['ingredient_name']   = request.form['ingredient%s_name' % i]
         ingredient['ingredient_amount'] = request.form['ingredient%s_amount' % i]
         ingredient['ingredient_unit']   = request.form['ingredient%s_unit' % i]
         ingredients.append(ingredient)
-        
-    for step_no in range(1,4):
+    
+    ## TODO ##    
+    steps_num = int( request.form['steps_counter'] )
+    for step_no in range(1, steps_num + 1):
         steps.append(request.form['recipe_step_%s' % step_no])
             
     data_out['name']        = request.form['name']
@@ -67,6 +71,8 @@ def post_recipe():
     data_out['cuisine']     = request.form['cuisine']
     data_out['category']    = request.form['category']
     
+    
+    ## TODO - change to is_lactose_free and is_gluten_free ##
     data_out['is_vegiterian']   = True if 'is_vegiterian'in request.form    else False
     data_out['has_lactose']     = True if 'has_lactose' in request.form     else False
     data_out['has_gluten']      = True if 'has_gluten' in request.form      else False
@@ -74,6 +80,8 @@ def post_recipe():
     #data_out[''] = request.form['']
     data_out['ingredients'] = ingredients
     data_out['preperation'] = steps
+    
+    data_out['picture'] = "default.jpg"
     
     # print("*****")
     # print("in", data_in)
