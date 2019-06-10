@@ -4,7 +4,7 @@
 <div class="container my-3">
   <h1>Add Recipe</h1>
   <p>Welcome and thank you for taking your time to share your recepies</p>
-  <form method="POST" action="{{ url_for('post_recipe') }}">
+  <form method="POST" action="{{ url_for('add_recipe_post') }}">
     <div class="form-row mb-3">
       <div class="col-12 col-sm-8 mb-3">
         <input type="text" class="form-control form-control-lg" id="recipe_name" name="name" placeholder="The name of your recepie" required>

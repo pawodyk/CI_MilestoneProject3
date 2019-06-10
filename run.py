@@ -26,29 +26,20 @@ def recipes():
                             recipes_list=mongo.db.recipes.find())
 
 
-@app.route("/recipes/<recipe_id>")
-def display_recipe(recipe_id):
-    recipe = mongo.db.recipes.find_one({'_id':ObjectId(recipe_id)})
-    return render_template('recipe.html',
-                            title='{0} | {1}'.format(page_title, recipe["name"]),
-                            recipe=recipe)
-
-
 @app.route("/recipes/add")
 def add_recipe():
-    return render_template('add_recepie.html',
-                            title='%s | Add Recipes' % page_title)
+    return render_template('add_recipe.html',
+                            title='%s | Add Recipe' % page_title)
                             
-@app.route("/recepies/post", methods=["POST"])
-def post_recipe():
-    data_in = request.form.to_dict()
+@app.route("/recepies/add/post", methods=["POST"])
+def add_recipe_post():
+    # data_in = request.form.to_dict()
     data_out = {}
     # [ print(x, data_in[x]) for x in data_in ] ##print data for debuging
     
     ingredients = []
     steps = []
     
-    ## TODO ##
     ingredients_num = int( request.form['ingredient_counter'] )
     for i in range(1, ingredients_num + 1):
         ingredient = {} 
@@ -57,7 +48,6 @@ def post_recipe():
         ingredient['ingredient_unit']   = request.form['ingredient%s_unit' % i]
         ingredients.append(ingredient)
     
-    ## TODO ##    
     steps_num = int( request.form['steps_counter'] )
     for step_no in range(1, steps_num + 1):
         steps.append(request.form['recipe_step_%s' % step_no])
@@ -92,21 +82,13 @@ def post_recipe():
     mongo.db.recipes.insert_one(data_out)
     return redirect( url_for('recipes') )
     
-    # {
-    #     "_id":{"$oid":"5cf908061c9d4400000393cf"},
-    #     "name":"Spaghetti Carbonara",
-    #     "author":"jodoe",
-    #     "prep_time":{"$numberInt":"40"},
-    #     "servings":{"$numberInt":"8"},
-    #     "calories":"400",
-    #     "ingredients":[{"ingredient_name":"spaghetti","amount":"500","units":"g"}],
-    #     "reviews":[{"name":"jdoe","rating":{"$numberInt":"5"},"description":"My favorite italian dish"},{"name":"tom","rating":{"$numberInt":"3"},"description":"Too little sause, otherwise good recepie."}],
-    #     "picture":"carb.jpg",
-    #     "preperation":["In a large pot of boiling salted water, cook spaghetti pasta until al dente. Drain well. Toss with 1 tablespoon of olive oil, and set aside. ","Meanwhile in a large skillet, cook chopped bacon until slightly crisp; remove and drain onto paper towels. Reserve 2 tablespoons of bacon fat; add remaining 1 tablespoon olive oil, and heat in reused large skillet. Add chopped onion, and cook over medium heat until onion is translucent. Add minced garlic, and cook 1 minute more. Add wine if desired; cook one more minute","Return cooked bacon to pan; add cooked and drained spaghetti. Toss to coat and heat through, adding more olive oil if it seems dry or is sticking together. Add beaten eggs and cook, tossing constantly with tongs or large fork until eggs are barely set. Quickly add 1/2 cup Parmesan cheese, and toss again. Add salt and pepper to taste (remember that bacon and Parmesan are very salty)","Serve immediately with chopped parsley sprinkled on top, and extra Parmesan cheese at table."],
-    #     "description":"A super rich, classic 'bacon and egg' spaghetti dish. Great to serve for company. This recipe also makes an unusual brunch offering."
-    # }
 
-    
+@app.route("/recipes/<recipe_id>")
+def display_recipe(recipe_id):
+    recipe = mongo.db.recipes.find_one({'_id':ObjectId(recipe_id)})
+    return render_template('recipe.html',
+                            title='{0} | {1}'.format(page_title, recipe["name"]),
+                            recipe=recipe)
 
 
 if __name__ == "__main__":    
