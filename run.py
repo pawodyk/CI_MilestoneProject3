@@ -28,8 +28,12 @@ def recipes():
 
 @app.route("/recipes/add")
 def add_recipe():
+    categories = mongo.db.categories.find()
+    cuisines = mongo.db.cuisines.find()
     return render_template('add_recipe.html',
-                            title='%s | Add Recipe' % page_title)
+                            title='%s | Add Recipe' % page_title,
+                            cuisines=cuisines,
+                            categories=categories)
                             
 @app.route("/recepies/add/post", methods=["POST"])
 def add_recipe_post():
@@ -64,8 +68,8 @@ def add_recipe_post():
     
     ## TODO - change to is_lactose_free and is_gluten_free ##
     data_out['is_vegiterian']   = True if 'is_vegiterian'in request.form    else False
-    data_out['has_lactose']     = True if 'has_lactose' in request.form     else False
-    data_out['has_gluten']      = True if 'has_gluten' in request.form      else False
+    data_out['is_lactose_free']     = True if 'is_lactose_free' in request.form     else False
+    data_out['is_gluten_free']      = True if 'is_gluten_free' in request.form      else False
     
     #data_out[''] = request.form['']
     data_out['ingredients'] = ingredients
@@ -86,9 +90,27 @@ def add_recipe_post():
 @app.route("/recipes/<recipe_id>")
 def display_recipe(recipe_id):
     recipe = mongo.db.recipes.find_one({'_id':ObjectId(recipe_id)})
+    cuisine_id = recipe['cuisine_id']
+    
+    cuisine = mongo.db.cuisine.find_one({'_id':ObjectId(cuisine_id)})
+    
+    recipe['cuisine_name'] = cuisine['cuisine_name']
+    
     return render_template('recipe.html',
                             title='{0} | {1}'.format(page_title, recipe["name"]),
                             recipe=recipe)
+
+@app.route("/recipes/<recipe_id>/edit")
+def edit_recipe(recipe_id):
+    recipe = mongo.db.recipes.find_one({'_id':ObjectId(recipe_id)})
+    return render_template('edit_recipe.html',
+                            title='{0} | Editing: {1}'.format(page_title, recipe["name"]),
+                            recipe=recipe)
+    
+
+@app.route("/recipes/<recipe_id>/edit/post", methods=["POST"])
+def edit_recipe_post():
+    return 
 
 
 if __name__ == "__main__":    
