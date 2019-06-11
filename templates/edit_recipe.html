@@ -1,0 +1,219 @@
+{% extends 'base.html' %} {% block content %}
+
+<header class="fluid-container">
+
+  <div class="jumbotron mb-4 text-white rounded d-flex banner-image" style="background-image: url( {{ url_for('static', filename='img/{}'.format(recipe.picture)) }} );">
+    <div class="col-md-8 p-2 bg-darkglass overflow-auto recipe-header">
+      <h1>{{ recipe.name }}</h1>
+    </div>
+  </div>
+</header>
+
+<main role="main" class="container">
+  <div class="row d-flex justify-content-center">
+
+    <div class="alert alert-warning" role="alert">
+      <h4 class="alert-heading">Edit mode!</h4>
+      <p>You are now in edit mode, in which you can edit your recipe. Simply edit fields you wish to update and press save.</p>
+      <hr>
+      <p class="mb-0"> If you changed your mind you can press cancel</p>
+    </div>
+  </div>
+
+  <form id="form-edit-recipe" method="POST" action="{{ url_for('edit_recipe_post', recipe_id=recipe._id) }}">
+
+    <div class="row border-top border-bottom border-warning py-3">
+
+      <aside class="col-md-4 sidebar">
+        <div class="p-4 mb-3 bg-light shadow-sm rounded">
+          <h3 class="font-italic">Ingredients:</h3>
+          <ul id="ingredient-list">
+            {% for item in recipe.ingredients %}
+            <li>
+              <div class="form-row mb-1" id="ingredient{{loop.index}}">
+                <div class="col-12 mb-1">
+                  <input type="text" class="form-control form-control-sm" id="ingredient{{loop.index}}_name" name="ingredient{{loop.index}}_name" value="{{item.ingredient_name}}" placeholder="" required>
+                </div>
+                <div class="col-12 mb-1">
+                  <div class="input-group">
+                    <input type="number" class="form-control form-control-sm" aria-label="Text input with dropdown button" id="ingredient{{loop.index}}_amount" name="ingredient{{loop.index}}_amount" value="{{item.ingredient_amount}}" placeholder="" required>
+                    <div class="input-group-append">
+                      <select class="custom-select custom-select-sm btn" name="ingredient{{loop.index}}_unit" id="ingredient{{loop.index}}_unit">
+                        {% for unit in units%}
+                        <option {% if item.ingredient_unit == unit %} selected {% endif %} value="{{unit}}">{{unit}}</option>
+                        {% endfor %}
+                    </select>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </li>
+            {% endfor %}
+          </ul>
+          <div class="form-row">
+            <div class="col-12 my-1 d-flex justify-content-center">
+              <button class="btn btn-success px-3 mr-2 " id="btn-add-ingredient" type="button"><i class="fas fa-plus-square"></i></button>
+              <button class="btn btn-danger px-3 shadow-sm" id="btn-rm-ingredient" type="button"><i class="fas fa-minus-square"></i></button>
+              <input type="number" id="ingredient-counter" name="ingredient_counter" value="{{recipe.ingredients|length}}" hidden/>
+            </div>
+          </div>
+        </div>
+      </aside>
+      <!--end of sidebar-->
+
+      <div class="col-md-8 pl-md-4">
+        <div class="row border-bottom mb-3 pl-1 justify-content-center">
+          <div class="col-12 mb-3">
+            <input type="text" class="form-control form-control-lg" id="recipe_name" name="name" value="{{ recipe.name }}" placeholder="The name of your recepie" required>
+          </div>
+          <div class="col-12 mb-3">
+            <div class="input-group">
+              <div class="input-group-prepend">
+                <span class="input-group-text" id="addon-wrapping">By</span>
+              </div>
+              <input type="text" class="form-control" id="recipe_author" name="author" value="{{ recipe.author }}" placeholder="Your Name" required>
+            </div>
+          </div>
+          <div class="col-12">
+            <div class="form-group">
+              <label for="description">Recipe description:</label>
+              <textarea class="form-control" id="description" name="description" rows="3">{{ recipe.description }}</textarea>
+            </div>
+          </div>
+          <div class="col-12 col-sm-6 col-lg-4 form-group">
+            <div class="input-group">
+              <div class="input-group-prepend">
+                <label class="input-group-text" for="recipe_prep_time" title="Preperation Time"><i class="far fa-clock"></i></label>
+              </div>
+              <input type="number" class="form-control" id="recipe_prep_time" name="prep_time" value="{{recipe.prep_time}}" required>
+              <div class="input-group-append">
+                <span class="input-group-text">min</span>
+              </div>
+            </div>
+          </div>
+          <div class="col-12 col-sm-6 col-lg-4 form-group">
+            <div class="input-group">
+              <div class="input-group-prepend">
+                <label class="input-group-text" for="recipe_servings" title="Servings"><i class="fas fa-utensils"></i> </label>
+              </div>
+              <input type="number" class="form-control" id="recipe_servings" name="servings" value="{{recipe.servings}}" required>
+              <div class="input-group-append">
+                <span class="input-group-text">portions</span>
+              </div>
+            </div>
+          </div>
+          <div class="col-12 col-sm-6 col-lg-4 form-group">
+            <div class="input-group">
+              <div class="input-group-prepend">
+                <label class="input-group-text" for="recipe_calories" title="Calories"><i class="fas fa-burn"></i></label>
+              </div>
+              <input type="number" class="form-control" id="recipe_calories" name="calories" value="{{recipe.calories}}" required>
+              <div class="input-group-append">
+                <span class="input-group-text">cal.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-6 pr-md-5">
+            <label for="">Category</label>
+            <select id="recipe_category" name="category" class="custom-select" required>
+            {% for category in categories %}
+            <option value="{{ category._id }}" {% if category._id|string == recipe.category %} selected {% endif %} >{{ category.name }}</option>
+            {% endfor %}
+          </select>
+          </div>
+          <div class="col-6 pl-md-5">
+            <label for="">Cuisine</label>
+            <select id="recipe_cuisine" name="cuisine" class="custom-select" required>
+              {% for cuisine in cuisines %}
+              <option value="{{ cuisine._id }}" {% if cuisine._id|string == recipe.cuisine %} selected {% endif %} >{{ cuisine.name }}</option>
+              {% endfor %}
+          </select>
+          </div>
+        </div>
+
+        <div class="row my-3">
+          <div class="col-12">
+            <table class="table text-center bg-info text-light">
+              <thead>
+                <tr>
+                  <th scope="col">Vegiterian</th>
+                  <th scope="col">Contain Lactose</th>
+                  <th scope="col">Contain Gluten</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <div class="custom-control custom-checkbox">
+                      <input type="checkbox" class="custom-control-input" id="recipe_vegi" name="is_vegiterian" {% if recipe.is_vegiterian==True %} checked {% endif %} value="True">
+                      <label class="custom-control-label" for="recipe_vegi"></label>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="custom-control custom-checkbox">
+                      <input type="checkbox" class="custom-control-input" id="recipe_lact" name="is_lactose_free" {% if recipe.is_lactose_free==True %} checked {% endif %} value="True">
+                      <label class="custom-control-label" for="recipe_lact"></label>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="custom-control custom-checkbox">
+                      <input type="checkbox" class="custom-control-input" id="recipe_glut" name="is_gluten_free" {% if recipe.is_gluten_free==True %} checked {% endif %} value="True">
+                      <label class="custom-control-label" for="recipe_glut"></label>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <small class="text-muted">* This information has been provided by anonymous users and they could be incorect! If you have any alergies please make sure you carefully check all the ingredients before consumption.</small>
+          </div>
+        </div>
+
+        <div class="row mt-4 pt-2">
+          <div class="col-12">
+            <h3 class="font-italic">Instructions:</h3>
+          </div>
+          <div class="col-12 border-top py-2">
+            <div id="steps_list">
+              {% for step in recipe.preperation %}
+              <div class="form-row" id="step{{loop.index}}">
+                <div class="col-12 mb-2">
+                  <div class="input-group form-group">
+                    <div class="input-group-prepend">
+                      <label for="recipe_step_{{loop.index}}" class="input-group-text">Step {{loop.index}}</label>
+                    </div>
+                    <textarea class="form-control" id="recipe_step_{{loop.index}}" name="recipe_step_{{loop.index}}" rows="2" required>{{step}}</textarea>
+                  </div>
+                </div>
+              </div>
+              {% endfor%}
+            </div>
+            <div class="form-row">
+              <div class="col-12 mb-3 button-group">
+                <button class="btn btn-success px-2 mb-2 shadow-sm" id="btn-add-step" type="button">add another step</button>
+                <button class="btn btn-danger px-2 mb-2 shadow-sm" id="btn-rm-step" type="button">remove last step</button>
+                <input type="number" id="steps-counter" name="steps_counter" value="{{ recipe.preperation|length}}" hidden/>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!--end of main part-->
+
+    </div>
+    <!--end of container-->
+    <div class=""></div>
+    <div class="row fixed-bottom border-top border-bottom border-warning py-3 px-1 mb-0 bg-light">
+      <div class="col-12 col-md-8 offset-md-2 col-lg-6 offset-lg-3 col-xl-4 offset-xl-4 d-flex justify-content-around">
+        <button class="btn btn-primary mr-1 mr-sm-2 p-2 shadow button-main" type="submit">Submit changes</button>
+        <a class="btn btn-danger p-2 shadow text-light button-secondary" href="{{ url_for('display_recipe', recipe_id=recipe._id) }}">Cancel</a>
+      </div>
+    </div>
+    
+  </form>
+  <!--end of form-->
+</main>
+
+{% endblock %}

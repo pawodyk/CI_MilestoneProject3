@@ -12,7 +12,7 @@ mongo = PyMongo(app)
 
 page_title = "Open Cookbook"
 
-units = ["g", "mg","kg","ml","l","t. spoon","tb. spoon","cup","glass","whole","half","quater","slice"]
+units = ["g", "mg","kg","ml","l","tsp","tbsp","cup","glass","whole","half","quater","slice"]
 
 @app.route("/")
 def home():
@@ -22,7 +22,6 @@ def home():
 
 @app.route("/recipes")
 def recipes():
-    
     return render_template('recipes.html', 
                             title='%s | Recipes' % page_title,
                             recipes_list=mongo.db.recipes.find())
@@ -68,11 +67,9 @@ def add_recipe_post():
     data_out['cuisine']     = request.form['cuisine']
     data_out['category']    = request.form['category']
     
-    
-    ## TODO - change to is_lactose_free and is_gluten_free ##
     data_out['is_vegiterian']   = True if 'is_vegiterian'in request.form    else False
-    data_out['is_lactose_free']     = True if 'is_lactose_free' in request.form     else False
-    data_out['is_gluten_free']      = True if 'is_gluten_free' in request.form      else False
+    data_out['is_lactose_free'] = True if 'is_lactose_free' in request.form else False
+    data_out['is_gluten_free']  = True if 'is_gluten_free' in request.form  else False
     
     #data_out[''] = request.form['']
     data_out['ingredients'] = ingredients
@@ -93,11 +90,15 @@ def add_recipe_post():
 @app.route("/recipes/<recipe_id>")
 def display_recipe(recipe_id):
     recipe = mongo.db.recipes.find_one({'_id':ObjectId(recipe_id)})
-    # cuisine_id = recipe['cuisine']
+    cuisine_id = recipe['cuisine']
+    category_id = recipe['category']
     
-    # cuisine = mongo.db.cuisine.find_one({'_id':ObjectId(cuisine_id)})
     
-    # recipe['cuisine_name'] = cuisine['cuisine_name']
+    cuisine = mongo.db.cuisines.find_one({'_id':ObjectId(cuisine_id)})
+    category = mongo.db.categories.find_one({'_id':ObjectId(category_id)})
+    
+    recipe['cuisine_name'] = cuisine['name']
+    recipe['category_name'] = category['name']
     
     return render_template('recipe.html',
                             title='{0} | {1}'.format(page_title, recipe["name"]),
@@ -106,15 +107,57 @@ def display_recipe(recipe_id):
 @app.route("/recipes/<recipe_id>/edit")
 def edit_recipe(recipe_id):
     recipe = mongo.db.recipes.find_one({'_id':ObjectId(recipe_id)})
+    categories = mongo.db.categories.find()
+    cuisines = mongo.db.cuisines.find()
     return render_template('edit_recipe.html',
                             title='{0} | Editing: {1}'.format(page_title, recipe["name"]),
+                            units=units,
                             recipe=recipe,
-                            units=units)
+                            categories=categories,
+                            cuisines=cuisines)
     
 
 @app.route("/recipes/<recipe_id>/edit/post", methods=["POST"])
-def edit_recipe_post():
-    return 
+def edit_recipe_post(recipe_id):
+    
+    ingredients = []
+    steps = []
+    
+    ingredients_num = int( request.form['ingredient_counter'] )
+    for i in range(1, ingredients_num + 1):
+        ingredient = {} 
+        ingredient['ingredient_name']   = request.form['ingredient%s_name' % i]
+        ingredient['ingredient_amount'] = request.form['ingredient%s_amount' % i]
+        ingredient['ingredient_unit']   = request.form['ingredient%s_unit' % i]
+        ingredients.append(ingredient)
+    
+    steps_num = int( request.form['steps_counter'] )
+    for step_no in range(1, steps_num + 1):
+        steps.append(request.form['recipe_step_%s' % step_no])
+    
+    mongo.db.recipes.update_one(
+        {'_id': ObjectId(recipe_id)},
+        {
+            '$set': {
+                'name': request.form.get('name'),
+                'author': request.form.get('author'),
+                'description': request.form.get('description'),
+                'prep_time': request.form.get('prep_time'),
+                'servings': request.form.get('servings'),
+                'calories': request.form.get('calories'),
+                'cuisine': request.form.get('cuisine'),
+                'category': request.form.get('category'),
+                'is_vegiterian':    True if 'is_vegiterian'in request.form    else False,
+                'is_lactose_free':  True if 'is_lactose_free' in request.form else False,
+                'is_gluten_free':   True if 'is_gluten_free' in request.form  else False,
+                'ingredients': ingredients,
+                'preperation': steps,
+                'picture': 'default.jpg'    
+            }
+        }
+    )
+    
+    return redirect(url_for('display_recipe', recipe_id=recipe_id))
 
 
 if __name__ == "__main__":    
