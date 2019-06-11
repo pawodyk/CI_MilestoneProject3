@@ -52,9 +52,15 @@
   </nav>
 
 
-
   {% block content %} {% endblock %}
 
+
+  <footer class="text-center text-muted bg-light mb-0 pb-5" >
+    <a href="#" id="back-top-in-footer" class="badge badge-light">TOP</a>
+    <p>This website was made by Pawel Wodyk.</p>
+    <small>All the recipes are from <a href="https://www.bbcgoodfood.com/" class="text-decoration-none">BBC Good Food</a><br> for demonstrational purposes only!</small>
+      
+  </footer>
 
   <script type="text/javascript" src="{{url_for('static', filename='js/jquery-3.4.1.min.js') }}"></script>
   <script type="text/javascript" src="{{url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
