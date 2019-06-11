@@ -1,5 +1,7 @@
 function renderIngredientElement(type, counter) {
 
+    //units = ["g", "mg", "kg", "ml", "l", "tsp", "tbsp", "cup", "glass", "whole", "half", "quater", "slice"]
+
     if (type === "li") {
         return `
         <li>
@@ -12,14 +14,19 @@ function renderIngredientElement(type, counter) {
                   <input type="number" class="form-control form-control-sm" id="ingredient${counter}_amount" name="ingredient${counter}_amount" required>
                   <div class="input-group-append">
                     <select class="custom-select custom-select-sm btn" name="ingredient${counter}_unit" id="ingredient${counter}_unit">
-                        <option selected>g</option>
-                        <option>mg</option>
-                        <option>kg</option>
-                        <option>ml</option>
-                        <option>l</option>
-                        <option>t. spoon</option>
-                        <option>tb. spoon</option>
-                        <option>glass</option>
+                        <option value="g">g</option>
+                        <option value="mg">mg</option>
+                        <option value="kg">kg</option>
+                        <option value="ml">ml</option>
+                        <option value="l">l</option>
+                        <option value="tsp">tsp</option>
+                        <option value="tbsp">tbsp</option>
+                        <option value="cup">cup</option>
+                        <option value="glass">glass</option>
+                        <option value="whole">whole</option>
+                        <option value="half">half</option>
+                        <option value="quater">quater</option>
+                        <option value="slice">slice</option>
                     </select>
                   </div>
                 </div>
@@ -40,14 +47,19 @@ function renderIngredientElement(type, counter) {
               <input type="number" class="form-control" id="ingredient${counter}_amount" name="ingredient${counter}_amount" required>
               <div class="input-group-append">
                 <select class="custom-select btn" name="ingredient${counter}_unit" id="ingredient${counter}_unit">
-                  <option>g</option>
-                  <option>mg</option>
-                  <option>kg</option>
-                  <option>ml</option>
-                  <option>l</option>
-                  <option>t. spoon</option>
-                  <option>tb. spoon</option>
-                  <option>glass</option>
+                    <option value="g">g</option>
+                    <option value="mg">mg</option>
+                    <option value="kg">kg</option>
+                    <option value="ml">ml</option>
+                    <option value="l">l</option>
+                    <option value="tsp">tsp</option>
+                    <option value="tbsp">tbsp</option>
+                    <option value="cup">cup</option>
+                    <option value="glass">glass</option>
+                    <option value="whole">whole</option>
+                    <option value="half">half</option>
+                    <option value="quater">quater</option>
+                    <option value="slice">slice</option>
                 </select>
               </div>
             </div>
@@ -60,7 +72,7 @@ $('#btn-add-ingredient').click(function() {
     let counter = $('#ingredient-counter').attr('value');
     counter++;
 
-    var html_newIngredient = renderIngredientElement( $('#ingredient-list').is('ul') ? "li" : "div", counter);
+    var html_newIngredient = renderIngredientElement($('#ingredient-list').is('ul') ? "li" : "div", counter);
 
     $(html_newIngredient).insertAfter(`#ingredient${counter - 1}`);
 
