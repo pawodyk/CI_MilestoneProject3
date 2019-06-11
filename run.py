@@ -102,6 +102,7 @@ def display_recipe(recipe_id):
     
     return render_template('recipe.html',
                             title='{0} | {1}'.format(page_title, recipe["name"]),
+                            is_owner = True, ## in the future to be used to verify the user, currentlly set to accept all users
                             recipe=recipe)
 
 @app.route("/recipes/<recipe_id>/edit")
@@ -159,6 +160,14 @@ def edit_recipe_post(recipe_id):
     
     return redirect(url_for('display_recipe', recipe_id=recipe_id))
 
+
+@app.route("/recipes/<recipe_id>/delete")
+def delete_recipe(recipe_id):
+    return redirect(url_for('display_recipe', recipe_id=recipe_id))
+
+@app.route("/recipes/<recipe_id>/delete/post", methods=["POST"])
+def delete_recipe_post(recipe_id):
+    return
 
 if __name__ == "__main__":    
     app.run(host=os.environ.get('IP', '127.0.0.1'), 

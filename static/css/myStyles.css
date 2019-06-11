@@ -73,9 +73,9 @@ body {
     text-align: center;
 }
 
-footer {
+footer#main-footer {
     border-top: 1px lightgray solid;
-    margin-top:40px;
+    /*margin-top:40px;*/
 }
 
 #back-top-in-footer {
