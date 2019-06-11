@@ -12,6 +12,8 @@ mongo = PyMongo(app)
 
 page_title = "Open Cookbook"
 
+units = ["g", "mg","kg","ml","l","t. spoon","tb. spoon","cup","glass","whole","half","quater","slice"]
+
 @app.route("/")
 def home():
     return render_template('index.html', 
@@ -33,7 +35,8 @@ def add_recipe():
     return render_template('add_recipe.html',
                             title='%s | Add Recipe' % page_title,
                             cuisines=cuisines,
-                            categories=categories)
+                            categories=categories,
+                            units=units)
                             
 @app.route("/recepies/add/post", methods=["POST"])
 def add_recipe_post():
@@ -47,7 +50,7 @@ def add_recipe_post():
     ingredients_num = int( request.form['ingredient_counter'] )
     for i in range(1, ingredients_num + 1):
         ingredient = {} 
-        ingredient['ingredient_name']   = request.form['ingredient%s_name' % i]
+        ingredient['ingredient_name']   = request.form['ingredient%s_name' % i].lower()
         ingredient['ingredient_amount'] = request.form['ingredient%s_amount' % i]
         ingredient['ingredient_unit']   = request.form['ingredient%s_unit' % i]
         ingredients.append(ingredient)
@@ -56,9 +59,9 @@ def add_recipe_post():
     for step_no in range(1, steps_num + 1):
         steps.append(request.form['recipe_step_%s' % step_no])
             
-    data_out['name']        = request.form['name']
-    data_out['author']      = request.form['author']
-    data_out['description'] = request.form['description']
+    data_out['name']        = request.form['name'].title()
+    data_out['author']      = request.form['author'].title()
+    data_out['description'] = request.form['description'].capitalize()
     data_out['prep_time']   = request.form['prep_time']
     data_out['servings']    = request.form['servings']
     data_out['calories']    = request.form['calories']
@@ -90,11 +93,11 @@ def add_recipe_post():
 @app.route("/recipes/<recipe_id>")
 def display_recipe(recipe_id):
     recipe = mongo.db.recipes.find_one({'_id':ObjectId(recipe_id)})
-    cuisine_id = recipe['cuisine_id']
+    # cuisine_id = recipe['cuisine']
     
-    cuisine = mongo.db.cuisine.find_one({'_id':ObjectId(cuisine_id)})
+    # cuisine = mongo.db.cuisine.find_one({'_id':ObjectId(cuisine_id)})
     
-    recipe['cuisine_name'] = cuisine['cuisine_name']
+    # recipe['cuisine_name'] = cuisine['cuisine_name']
     
     return render_template('recipe.html',
                             title='{0} | {1}'.format(page_title, recipe["name"]),
@@ -105,7 +108,8 @@ def edit_recipe(recipe_id):
     recipe = mongo.db.recipes.find_one({'_id':ObjectId(recipe_id)})
     return render_template('edit_recipe.html',
                             title='{0} | Editing: {1}'.format(page_title, recipe["name"]),
-                            recipe=recipe)
+                            recipe=recipe,
+                            units=units)
     
 
 @app.route("/recipes/<recipe_id>/edit/post", methods=["POST"])

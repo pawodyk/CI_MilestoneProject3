@@ -111,14 +111,9 @@
               <input type="number" class="form-control" aria-label="Text input with dropdown button" id="ingredient1_amount" name="ingredient1_amount" placeholder="eg. 500" required>
               <div class="input-group-append">
                 <select class="custom-select btn" name="ingredient1_unit" id="ingredient1_unit">
-                  <option>g</option>
-                  <option>mg</option>
-                  <option>kg</option>
-                  <option>ml</option>
-                  <option>l</option>
-                  <option>t. spoon</option>
-                  <option>tb. spoon</option>
-                  <option>glass</option>
+                  {% for unit in units%}
+                  <option value="{{unit}}">{{unit}}</option>
+                  {% endfor %}
                 </select>
               </div>
             </div>
