@@ -14,6 +14,22 @@ page_title = "Open Cookbook"
 
 units = ["g", "mg","kg","ml","l","tsp","tbsp","cup","glass","whole","half","quater","slice"]
 
+
+
+@app.context_processor
+def inject_categories():
+    categories_mongo = mongo.db.categories.find()
+    
+    return dict(categories_list=categories_mongo)
+    
+@app.context_processor
+def inject_cuisne():
+    cuisines_mongo = mongo.db.cuisines.find()
+
+    return dict(cuisines_list=cuisines_mongo)
+
+
+
 @app.route("/")
 def home():
     return render_template('index.html', 
@@ -22,10 +38,40 @@ def home():
 
 @app.route("/recipes")
 def recipes():
+    recipes = mongo.db.recipes.find()
+    recipes_list = [recipe for recipe in recipes]
+    
     return render_template('recipes.html', 
                             title='%s | Recipes' % page_title,
-                            recipes_list=mongo.db.recipes.find())
+                            recipes_list=recipes_list)
+                            
+                            
+@app.route("/recipes/filterby/category/<category_id>")
+def recipes_by_category(category_id):
+    recipes = mongo.db.recipes.find({'category': category_id})
+    category = mongo.db.categories.find_one({'_id': ObjectId(category_id)})
+    category_name = category['name']
+    
+    recipes_list = [recipe for recipe in recipes]
+    
+    return render_template('recipes.html', 
+                            title='{0} | Recipes for {1}'.format(page_title, category_name),
+                            category_name=category_name,
+                            recipes_list= recipes_list)
 
+
+@app.route("/recipes/filterby/cuisine/<cuisine_id>")
+def recipes_by_cuisine(cuisine_id):
+    recipes = mongo.db.recipes.find({'cuisine': cuisine_id})
+    cuisine = mongo.db.cuisines.find_one({'_id': ObjectId(cuisine_id)})
+    cuisine_name = cuisine['name']
+    
+    recipes_list = [recipe for recipe in recipes]
+    
+    return render_template('recipes.html', 
+                            title='{0} | Recipes from {1} Cuisine'.format(page_title, cuisine_name),
+                            cuisine_name=cuisine_name,
+                            recipes_list=recipes_list)
 
 @app.route("/recipes/add")
 def add_recipe():
@@ -190,7 +236,7 @@ def delete_recipe_confirmed(recipe_id):
     return redirect(url_for('recipes'))
     
 
-if __name__ == "__main__":    
+if __name__ == "__main__": 
     app.run(host=os.environ.get('IP', '127.0.0.1'), 
             port=int(os.environ.get('PORT', 5000)), 
             debug=True)

@@ -1,10 +1,25 @@
 {% extends 'base.html' %} {% block content %}
 
-<div class="container py-5">
+<div class="container pt-4">
 
-  <h1 class="font-italic text-center mb-3 pb-2 border-bottom border-primary">Recipes:</h1>
+  <h1 class="font-italic text-center mb-2 pb-2 border-bottom border-primary">
+    Recipes {% if category_name is defined %} for {{category_name}} {% elif cuisine_name is defined %} from {{cuisine_name}} Cuisine {% endif %}
+  </h1>
+  <div class="row d-flex justify-content-between m-2">
+    <a class="btn btn-success px-3" href="{{ url_for('add_recipe') }}">Add Recipe + </a>
+    <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#sory-by" aria-expanded="false" aria-controls="collapseExample">Sort</button>
+  </div>
+  <div class="collapse" id="sory-by">
+    <div class="card card-body">
+      Placeholder
+    </div>
+  </div>
+
+
+
+
   {% if recipes_list %}
-  <div class="row px-2 d-flex flex-grow-1 align-content-start flex-wrap">
+  <div class="row px-2 d-flex flex-grow-1 align-content-start flex-wrap border-bottom border-primary mb-2 pb-3">
     {% for recipe in recipes_list %}
     <div class="col-12 col-lg-6 p-2">
       <a href="{{ url_for('display_recipe', recipe_id=recipe._id) }}">
@@ -20,27 +35,23 @@
         </div>
       </a>
     </div>
-    {% endfor %}
-    
-  {% else %}
-  <div class="row d-flex justify-content-center">
-    <div class="col-auto ">
-      <div class="alert alert-primary" role="alert">
-        <h4 class="alert-heading">No Recipies!</h4>
-        <hr>
-        <p>Unfortunatlly there are no recipes at this time. </p>
-        <p class="mb-0">You can fix this by adding your recepie using <a href="{{ url_for('add_recipe') }}" class="badge badge-success">Add Recipe</a> button!</p>
+    {% endfor %} {% else %}
+    <div class="row d-flex justify-content-center">
+      <div class="col-auto ">
+        <div class="alert alert-primary" role="alert">
+          <h4 class="alert-heading">No Recipies!</h4>
+          <hr>
+          <p>Unfortunatlly there are no recipes at this time. </p>
+          <p class="mb-0">You can fix this by adding your recepie using <a href="{{ url_for('add_recipe') }}" class="badge badge-success">Add Recipe</a> button!</p>
+        </div>
       </div>
-    </div>
 
-  {% endif %}
+      {% endif %}
 
-    <div class="row d-flex justify-content-end w-100 mx-2">
-      <a class="btn btn-success px-3" href="{{ url_for('add_recipe') }}">Add Recipe + </a>
+
     </div>
   </div>
-</div>
 
-{% endblock %}
+  {% endblock %}
 
-<!--{% block script %} {% endblock %}-->
+  <!--{% block script %} {% endblock %}-->

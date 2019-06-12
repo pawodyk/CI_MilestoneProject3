@@ -30,17 +30,22 @@
             <a class="nav-link" href="{{ url_for('home') }}">Home</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('recipes') }}">Recipes</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
+            <a class="nav-link" href="{{ url_for('recipes') }}">All Recipes</a>
           </li>
           <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="dropdown09" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Dropdown</a>
-            <div class="dropdown-menu" aria-labelledby="dropdown09">
-              <a class="dropdown-item" href="#">Action</a>
-              <a class="dropdown-item" href="#">Another action</a>
-              <a class="dropdown-item" href="#">Something else here</a>
+            <a class="nav-link dropdown-toggle" href="#" id="dropdown-categories" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Recipes by Category</a>
+            <div class="dropdown-menu" aria-labelledby="dropdown-categories">
+              {% for category in categories_list %}
+              <a class="dropdown-item" href="{{url_for('recipes_by_category', category_id=category._id)}}">{{category.name}}</a> 
+              {% endfor %}
+            </div>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="dropdown-cuisines" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Recipes by Cuisine</a>
+            <div class="dropdown-menu" aria-labelledby="dropdown-cuisines">
+              {% for cuisine in cuisines_list %}
+              <a class="dropdown-item" href="{{url_for('recipes_by_cuisine', cuisine_id=cuisine._id)}}">{{cuisine.name}} Cuisine</a> 
+              {% endfor %}
             </div>
           </li>
         </ul>
@@ -55,11 +60,11 @@
   {% block content %} {% endblock %}
 
 
-  <footer id="main-footer" class="text-center text-muted bg-light mb-0 pb-5" >
+  <footer id="main-footer" class="text-center text-muted bg-light mb-0 pb-5">
     <a href="#" id="back-top-in-footer" class="badge badge-light">TOP</a>
     <p>This website was made by Pawel Wodyk.</p>
     <small>All the recipes are from <a href="https://www.bbcgoodfood.com/" class="text-decoration-none">BBC Good Food</a><br> for demonstrational purposes only!</small>
-      
+
   </footer>
 
   <script type="text/javascript" src="{{url_for('static', filename='js/jquery-3.4.1.min.js') }}"></script>
