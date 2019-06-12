@@ -1,0 +1,162 @@
+{% extends 'base.html' %} {% block content %}
+
+<header class="fluid-container">
+  <div class="alert alert-danger m-0" role="alert">
+    <h2 class="alert-heading font-bolder text-uppercase">Deleting Recipe !</h2>
+    <p class="lead">Are you sure you wish to pernamentlly delete the recipe for "{{ recipe.name }}" ?</p>
+    <p class="">To complete the action press the delete button bellow, if you changed your mind press the cancell button.</p>
+    <hr>
+    <div class="mb-0 d-flex justify-content-center">
+      <a class="btn btn-danger py-2 px-0 mr-2 shadow button-main" href="{{ url_for('delete_recipe_confirmed', recipe_id=recipe._id) }}">Pernamentlly DELETE this recipe</a>
+      <a class="btn btn-secondary py-2 px-0 shadow text-white button-secondary" href="{{ url_for('display_recipe', recipe_id=recipe._id) }}">Cancel</a>
+    </div>
+  </div>
+
+  <div class="jumbotron mb-4 text-white rounded banner-image d-flex" style="background-image: url( {{ url_for('static', filename='img/{}'.format(recipe.picture)) }} );">
+    <div class="col-md-8 p-2 bg-darkglass overflow-auto recipe-header">
+      <h1>{{ recipe.name }}</h1>
+      <p class="lead my-3">{{ recipe.description }}</p>
+    </div>
+  </div>
+
+</header>
+
+<main role="main" class="container">
+  <div class="row border-top border-bottom border-danger py-4 ">
+
+    <aside class="col-md-4 mb-sm-5">
+      <div class="sidebar bg-light shadow-sm p-3 pb-5">
+        <h3 class="font-italic mb-3 pb-2 border-bottom ">Ingredients:</h3>
+        <ul>
+          {% for item in recipe.ingredients %}
+          <li><i class="fas fa-check fa-xs pr-1"></i>{{item.ingredient_amount}}&nbsp;{{item.ingredient_unit}} - {{item.ingredient_name}}</li>
+          {% endfor %}
+        </ul>
+      </div>
+    </aside>
+
+
+    <div class="col-md-8 pl-md-4">
+      <div class="row ">
+        <div class="col-12 px-2 mt-4 mt-md-0">
+          <blockquote class="blockquote text-center">
+            <h1 class="mb-1">{{ recipe.name }}</h1>
+            <div class="blockquote-footer ">created by {{ recipe.author }}</div>
+          </blockquote>
+        </div>
+      </div>
+      <div class="row d-flex flex-wrap text-center text-nowrap my-2 pb-1 border-bottom recipe-info">
+        <div class="col">
+          <span class="p-2 mb-2" title="Preperation Time"><i class="far fa-clock"></i> {{recipe.prep_time}} min </span>
+        </div>
+        <div class="col">
+          <span class="p-2 mb-2" title="Servings"><i class="fas fa-utensils"></i> {{recipe.servings}} portions </span>
+        </div>
+        <div class="col">
+          <span class="p-2 mb-2" title="Calories"><i class="fas fa-burn"></i> {{recipe.calories}} cal. </span>
+        </div>
+      </div>
+
+      <div class="row my-3 border-bottom">
+        <div class="col-12 col-sm-6 text-center">
+          <h3>Category: <span class="badge badge-pill badge-primary">{{recipe.category_name}}</span></h3>
+        </div>
+        <div class="col-12 col-sm-6 text-center">
+          <h3>Cuisine: <span class="badge badge-pill badge-primary">{{recipe.cuisine_name}}</span></h3>
+        </div>
+      </div>
+
+
+
+      <div class="row">
+        <div class="col-12">
+
+
+          <table class="table text-center bg-info text-light">
+            <thead>
+              <tr>
+                <th scope="col">Vegiterian</th>
+                <th scope="col">Lactose Free</th>
+                <th scope="col">Gluten Free</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  {% if recipe.is_vegiterian == True %}
+                  <i class="fas fa-check-circle"></i> {% else %}
+                  <i class="fas fa-times-circle"></i> {% endif %}
+                </td>
+                <td>
+                  {% if recipe.is_lactose_free == True %}
+                  <i class="fas fa-check-circle"></i> {% else %}
+                  <i class="fas fa-times-circle"></i> {% endif %}
+                </td>
+                <td>
+                  {% if recipe.is_gluten_free == True %}
+                  <i class="fas fa-check-circle"></i> {% else %}
+                  <i class="fas fa-times-circle"></i> {% endif %}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <small class="text-muted">* The above information has been provided by anonymous users and they could be incorect! If you have any alergies please make sure you carefully check all the ingredients before consumption.</small>
+        </div>
+      </div>
+
+      <div class="row mt-4 pt-2">
+        <div class="col-12">
+          <h3 class="font-italic">Instructions:</h3>
+        </div>
+        <div class="col-12 border-top py-2">
+          <ol>
+            {% for step in recipe.preperation %}
+            <li class="pb-2">{{step}}</li>
+            {% endfor%}
+          </ol>
+        </div>
+      </div>
+      {% if is_owner %}
+      <!-- This section will only display for verified users -->
+      <div class="row">
+        <div class="col-12">
+          <div class="alert alert-info" role="alert">
+            <p>If you're unhappy with your recipe you can edit or delete it using buttons below</p>
+            <hr>
+            <div class="mb-0 d-flex justify-content-center">
+              <a class="btn btn-primary py-2 px-0 mr-2 shadow text-white w-25 text-truncate" href="{{ url_for('edit_recipe', recipe_id=recipe._id) }}">Edit</a>
+              <a class="btn btn-danger py-2 px-0 shadow text-white w-25 text-truncate" href="{{ url_for('delete_recipe', recipe_id=recipe._id) }}">Delete</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  {% if recipe.reviews %}
+  <div class="row my-2 border-bottom border-danger">
+    {% for review in recipe.reviews %}
+    <div class="col-12 col-md-6">
+      <div class="row border rounded overflow-hidden m-3 shadow-sm ">
+        <div class="col-12 col-sm-8 col-md-12 col-lg-8 p-3 d-flex flex-column position-static">
+
+          <h5 class="mb-0 text-capitalize">{{review.name}}</h5>
+          <div class="mb-1 text-muted">12/02/18</div>
+          <p class="card-text mb-auto">{{review.description}}</p>
+          <div class="d-inline-block mt-2 text-primary">
+            {% if review.rating != null %} {% for star in range( review.rating ) %}
+            <i class="fas fa-utensil-spoon"></i> {% endfor %} {% endif %}
+          </div>
+        </div>
+
+        <div class="col-4 pr-2 d-none d-sm-flex d-md-none d-lg-flex justify-content-end align-items-center">
+          <img src="{{ url_for('static', filename='img/{}'.format(recipe.picture)) }}" alt="" class="rounded-circle img-thumbnail user-image">
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+</main>
+{% endblock %}

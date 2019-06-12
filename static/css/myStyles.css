@@ -67,15 +67,23 @@ body {
 
 .button-main,
 .button-secondary {
-    width: 100%;
-    max-width: 300px;
     vertical-align: center;
     text-align: center;
 }
 
+.button-main {
+    width: 60%;
+    max-width: 300px;
+}
+
+.button-secondary {
+    width: 30%;
+    max-width: 200px;
+}
+
 footer#main-footer {
     border-top: 1px lightgray solid;
-    /*margin-top:40px;*/
+    margin-top:40px;
 }
 
 #back-top-in-footer {

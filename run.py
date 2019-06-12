@@ -36,7 +36,8 @@ def add_recipe():
                             cuisines=cuisines,
                             categories=categories,
                             units=units)
-                            
+
+
 @app.route("/recepies/add/post", methods=["POST"])
 def add_recipe_post():
     # data_in = request.form.to_dict()
@@ -105,6 +106,7 @@ def display_recipe(recipe_id):
                             is_owner = True, ## in the future to be used to verify the user, currentlly set to accept all users
                             recipe=recipe)
 
+
 @app.route("/recipes/<recipe_id>/edit")
 def edit_recipe(recipe_id):
     recipe = mongo.db.recipes.find_one({'_id':ObjectId(recipe_id)})
@@ -161,13 +163,17 @@ def edit_recipe_post(recipe_id):
     return redirect(url_for('display_recipe', recipe_id=recipe_id))
 
 
-@app.route("/recipes/<recipe_id>/delete")
+@app.route("/recipes/<recipe_id>/confirm-deletion")
 def delete_recipe(recipe_id):
-    return redirect(url_for('display_recipe', recipe_id=recipe_id))
+    return render_template('delete_recipe.html', 
+                            recipe=mongo.db.recipes.find_one({'_id':ObjectId(recipe_id)}))
 
-@app.route("/recipes/<recipe_id>/delete/post", methods=["POST"])
-def delete_recipe_post(recipe_id):
-    return
+
+@app.route("/recipes/<recipe_id>/deleted")
+def delete_recipe_confirmed(recipe_id):
+    mongo.db.recipes.remove({'_id':ObjectId(recipe_id)})
+    return redirect(url_for('recipes'))
+    
 
 if __name__ == "__main__":    
     app.run(host=os.environ.get('IP', '127.0.0.1'), 
