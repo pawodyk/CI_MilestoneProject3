@@ -125,4 +125,72 @@ $('#btn-rm-step').click(function() {
     }
 })
 
-//function removeElement(prefix, start)
+
+$('#rating_block').children('span').click(function() {
+
+    
+    if($(this).attr('id') === "rate1" ){
+        colorSpoon("rate2", false);
+        colorSpoon("rate3", false);
+        colorSpoon("rate4", false);
+        colorSpoon("rate5", false);
+        $('#rating_counter').attr('value', 1);
+    } 
+    else if($(this).attr('id') === "rate2" ){
+        colorSpoon("rate2", true);
+        colorSpoon("rate3", false);
+        colorSpoon("rate4", false);
+        colorSpoon("rate5", false);
+        $('#rating_counter').attr('value', 2);
+    }
+    else if($(this).attr('id') === "rate3" ){
+        colorSpoon("rate2", true);
+        colorSpoon("rate3", true);
+        colorSpoon("rate4", false);
+        colorSpoon("rate5", false);
+        $('#rating_counter').attr('value', 3);
+    }
+    else if($(this).attr('id') === "rate4" ){
+        colorSpoon("rate2", true);
+        colorSpoon("rate3", true);
+        colorSpoon("rate4", true);
+        colorSpoon("rate5", false);
+        $('#rating_counter').attr('value', 4);
+    }
+    else if($(this).attr('id') === "rate5" ){
+        colorSpoon("rate2", true);
+        colorSpoon("rate3", true);
+        colorSpoon("rate4", true);
+        colorSpoon("rate5", true);
+        $('#rating_counter').attr('value', 5);
+    }
+    
+    // let x = 0;
+    
+    
+    // if      ($(this).attr('id') === "rate1")   x = 1
+    // else if ( $(this).attr('id') === "rate2")  x = 2
+    // else if ( $(this).attr('id') === "rate3")  x = 3
+    // else if ( $(this).attr('id') === "rate4")  x = 4
+    // else if ( $(this).attr('id') === "rate5")  x = 5
+    
+    // for (var i = 1; i < x  i--; ) {
+        
+    // }
+
+})
+
+function colorSpoon(elementId, mode) {
+
+    //$('#rating_block').children('span').removeClass("text-primary").removeClass("text-secondary")
+
+    $(`#${elementId}`).removeClass("text-primary").removeClass("text-secondary")
+
+    if (mode) {
+        $(`#${elementId}`).addClass("text-primary")
+    }
+    else {
+        $(`#${elementId}`).addClass("text-secondary")
+    }
+    return
+}

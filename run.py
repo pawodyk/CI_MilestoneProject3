@@ -107,6 +107,22 @@ def display_recipe(recipe_id):
                             recipe=recipe)
 
 
+@app.route("/recipes/<recipe_id>/review/post", methods=["POST"])
+def review_recipe_post(recipe_id):
+    review = request.form.to_dict()
+    
+    mongo.db.recipes.update_one(
+        {'_id': ObjectId(recipe_id)},
+        {
+            '$push': { 
+                'reviews': review
+            }
+        }
+    )
+    return redirect(url_for('display_recipe', recipe_id=recipe_id))
+    
+
+
 @app.route("/recipes/<recipe_id>/edit")
 def edit_recipe(recipe_id):
     recipe = mongo.db.recipes.find_one({'_id':ObjectId(recipe_id)})
@@ -154,8 +170,7 @@ def edit_recipe_post(recipe_id):
                 'is_lactose_free':  True if 'is_lactose_free' in request.form else False,
                 'is_gluten_free':   True if 'is_gluten_free' in request.form  else False,
                 'ingredients': ingredients,
-                'preperation': steps,
-                'picture': 'default.jpg'    
+                'preperation': steps
             }
         }
     )

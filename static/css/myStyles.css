@@ -2,6 +2,7 @@
 
 body {
     font-family: "Merriweather Sans", Helvetica, Arial, sans-serif;
+    background-color:#f8f9fa;
 }
 
 .navbar-brand {
@@ -83,11 +84,11 @@ body {
 
 footer#main-footer {
     border-top: 1px lightgray solid;
-    margin-top:40px;
+    margin-top: 40px;
 }
 
 #back-top-in-footer {
-    
+
     height: 30px;
     font-size: 20px;
     position: relative;
@@ -101,6 +102,19 @@ footer#main-footer {
 
 .object-fit-cover {
     object-fit: cover;
+}
+
+.spoon {
+    display: inline-block;
+    width: 30px;
+    text-align: center;
+
+}
+
+.spoon>i {
+    font-size: 22px;
+    display: inline-block;
+    cursor: pointer;
 }
 
 input[type=number]::-webkit-inner-spin-button,
