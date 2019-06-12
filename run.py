@@ -134,7 +134,7 @@ def add_recipe_post():
     return redirect( url_for('recipes') )
     
 
-@app.route("/recipes/<recipe_id>")
+@app.route("/recipe/<recipe_id>")
 def display_recipe(recipe_id):
     recipe = mongo.db.recipes.find_one({'_id':ObjectId(recipe_id)})
     cuisine_id = recipe['cuisine']
@@ -153,7 +153,7 @@ def display_recipe(recipe_id):
                             recipe=recipe)
 
 
-@app.route("/recipes/<recipe_id>/review/post", methods=["POST"])
+@app.route("/recipe/<recipe_id>/review/post", methods=["POST"])
 def review_recipe_post(recipe_id):
     review = request.form.to_dict()
     
@@ -169,7 +169,7 @@ def review_recipe_post(recipe_id):
     
 
 
-@app.route("/recipes/<recipe_id>/edit")
+@app.route("/recipe/<recipe_id>/edit")
 def edit_recipe(recipe_id):
     recipe = mongo.db.recipes.find_one({'_id':ObjectId(recipe_id)})
     categories = mongo.db.categories.find()
@@ -182,7 +182,7 @@ def edit_recipe(recipe_id):
                             cuisines=cuisines)
     
 
-@app.route("/recipes/<recipe_id>/edit/post", methods=["POST"])
+@app.route("/recipe/<recipe_id>/edit/post", methods=["POST"])
 def edit_recipe_post(recipe_id):
     
     ingredients = []
@@ -224,13 +224,13 @@ def edit_recipe_post(recipe_id):
     return redirect(url_for('display_recipe', recipe_id=recipe_id))
 
 
-@app.route("/recipes/<recipe_id>/confirm-deletion")
+@app.route("/recipe/<recipe_id>/confirm-deletion")
 def delete_recipe(recipe_id):
     return render_template('delete_recipe.html', 
                             recipe=mongo.db.recipes.find_one({'_id':ObjectId(recipe_id)}))
 
 
-@app.route("/recipes/<recipe_id>/deleted")
+@app.route("/recipe/<recipe_id>/deleted")
 def delete_recipe_confirmed(recipe_id):
     mongo.db.recipes.remove({'_id':ObjectId(recipe_id)})
     return redirect(url_for('recipes'))
