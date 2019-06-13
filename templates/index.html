@@ -7,7 +7,7 @@
     </div>
   </div>
   <div class="row no-gutters">
-    <div class="col-12">
+    <div class="col-12 carusel-container">
         <div id="receipe-showcase" class="carousel slide" data-ride="carousel">
           <ol class="carousel-indicators">
             {% for recipe in top_recipes %}
@@ -17,13 +17,13 @@
           <div class="carousel-inner bg-darkglass">
             {% for recipe in top_recipes %}
             <div class="carousel-item {%if loop.index == 1 %} active {%endif%}">
-              <div class="d-block overflow-hidden" >
+              <div class="image-container">
                 <img src="{{ url_for('static', filename='img/{}'.format(recipe.picture)) }}" class="d-block mx-auto img-fluid object-fit-cover" alt="...">
               </div>
 
-              <div class="carousel-caption d-none d-md-block">
+              <div class="carousel-caption d-block bg-darkglass">
                 <h5>{{recipe.name}}</h5>
-                <p>{{recipe.description}}</p>
+                <p class="d-none d-sm-inline">{{recipe.description}}</p>
               </div>
             </div>
             {%endfor%}

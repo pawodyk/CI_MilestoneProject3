@@ -130,7 +130,14 @@ footer#main-footer {
     cursor: pointer;
 }
 
-#receipe-showcase {
+.carusel-container {
+  height: 50vh  
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#receipe-showcase .carousel-inner .image-container {
     height: auto;
     width: auto;
     overflow: hidden;
