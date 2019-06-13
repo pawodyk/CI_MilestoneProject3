@@ -152,6 +152,45 @@ input[type=number] {
     -moz-appearance: textfield;
 }
 
+.fs-8 {
+    font-size: 0.8rem;
+}
+
+.fs-10 {
+    font-size: 1rem;
+}
+
+.fs-12 {
+    font-size: 1.2rem;
+}
+
+.fs-15 {
+    font-size: 1.5rem;
+}
+
+.fs-20 {
+    font-size: 2rem;
+}
+
+.fs-25 {
+    font-size: 2.5rem;
+}
+
+.fs-30 {
+    font-size: 3rem;
+}
+
+.fs-40 {
+    font-size: 4rem;
+}
+
+.bookmark {
+    visibility: hidden; 
+    height:40px; /* size of the menu*/
+}
+
+/* MEDIA QUERY*/
+
 /* Small devices (landscape phones, 576px and up) */
 
 @media (min-width: 576px) {
@@ -194,13 +233,12 @@ input[type=number] {
 
 @media (min-width: 1200px) {
     .carousel-container {
-        height:600px;
+        height: 600px;
     }
 
     #recipe-showcase .image-container {
         width: 100%;
         max-height: 600px
-        
     }
     .carousel-container {
         background-color: rgba(0, 0, 0, 0.1)

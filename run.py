@@ -11,9 +11,10 @@ app.config["MONGO_DBNAME"] = os.getenv('MONGO_DBNAME', 'cookbook')
 app.config["MONGO_URI"] = os.getenv('MONGO_URI', 'mongodb://localhost:27017/cookbook')
 app.secret_key = os.getenv("SECRET_KEY", "fallbacksecretvalue123")
 
+
 mongo = PyMongo(app)
 
-page_title = "Open Cookbook"
+page_title = os.getenv("PAGE_TITLE", "Open Cookbook")
 
 units = ["g", "mg","kg","ml","l","tsp","tbsp","cup","glass","whole","half","quater","slice"]
 
@@ -35,14 +36,49 @@ def inject_cuisne():
 
 @app.route("/")
 def home():
-    recipes = mongo.db.recipes.find().sort('views', -1).limit(5);
-    top_recipes = [recipe for recipe in recipes]
+    top_recipes = [recipe for recipe in mongo.db.recipes.find().sort('views', -1).limit(5)]
     
-    #print(top_recipes)
+    display_limit = 6
+    
+    categories = mongo.db.categories.find()
+    cuisines = mongo.db.cuisines.find()
+    
+    categories_list = []
+    cuisines_list = []
+    requirements_list = []
+    
+    for category in categories:
+        category_name = category['name']
+        category_id = category['_id']
+        
+        recipes_list = [ r for r in mongo.db.recipes.find({'category': str(category_id)}, {'name', 'author', 'description', 'picture', '_id', 'views'}).sort('views', -1).limit(display_limit) ]
+        recipes_count = mongo.db.recipes.find({'category': str(category_id)}).count()
+        
+        categories_list.append({'id': category_id, 'name': category['name'], 'recipes': recipes_list, 'total_recipes': recipes_count})
+        
+    for cuisine in cuisines:
+        cuisine_name = cuisine['name']
+        cuisine_id = cuisine['_id']
+        
+        recipes_list = [ r for r in mongo.db.recipes.find({'cuisine': str(cuisine_id)}, {'name', 'author', 'description', 'picture', '_id', 'views'}).sort('views', -1).limit(display_limit) ]
+        recipes_count = mongo.db.recipes.find({'cuisine': str(cuisine_id)}).count()
+        
+        cuisines_list.append({'id': cuisine_id, 'name': cuisine['name'], 'recipes': recipes_list, 'total_recipes': recipes_count})
+        
+    vegiterian = [ r for r in mongo.db.recipes.find({'is_vegiterian': True}, {'name', 'author', 'description', 'picture', '_id', 'views'}).sort('views', -1).limit(display_limit) ]
+    lactosefree = [ r for r in mongo.db.recipes.find({'is_lactose_free': True}, {'name', 'author', 'description', 'picture', '_id', 'views'}).sort('views', -1).limit(display_limit) ]
+    glutenfree = [ r for r in mongo.db.recipes.find({'is_gluten_free': True}, {'name', 'author', 'description', 'picture', '_id', 'views'}).sort('views', -1).limit(display_limit) ]
+    
+    requirements_list.append({'name': 'Vegiterian', 'recipes': vegiterian})
+    requirements_list.append({'name': 'Lactose Free', 'recipes': lactosefree})
+    requirements_list.append({'name': 'Gluten Free', 'recipes': glutenfree})
     
     return render_template('index.html', 
                             title=page_title,
-                            top_recipes=top_recipes)
+                            top_recipes=top_recipes,
+                            categories=categories_list,
+                            cuisines=cuisines_list,
+                            requirements=requirements_list)
 
 
 @app.route("/recipes")
