@@ -1,4 +1,6 @@
 import os
+
+from datetime import datetime as dt
 from flask import Flask, render_template, url_for, redirect, request, session
 from flask_pymongo import PyMongo
 from bson.objectid import ObjectId
@@ -7,6 +9,7 @@ from bson.objectid import ObjectId
 app = Flask(__name__)
 app.config["MONGO_DBNAME"] = os.getenv('MONGO_DBNAME', 'cookbook')
 app.config["MONGO_URI"] = os.getenv('MONGO_URI', 'mongodb://localhost:27017/cookbook')
+app.secret_key = os.getenv("SECRET_KEY", "fallbacksecretvalue123")
 
 mongo = PyMongo(app)
 
@@ -32,8 +35,14 @@ def inject_cuisne():
 
 @app.route("/")
 def home():
+    recipes = mongo.db.recipes.find().sort('views', -1).limit(5);
+    top_recipes = [recipe for recipe in recipes]
+    
+    #print(top_recipes)
+    
     return render_template('index.html', 
-                            title=page_title)
+                            title=page_title,
+                            top_recipes=top_recipes)
 
 
 @app.route("/recipes")
@@ -121,6 +130,8 @@ def add_recipe_post():
     #data_out[''] = request.form['']
     data_out['ingredients'] = ingredients
     data_out['preperation'] = steps
+    data_out['views'] = 0
+    data_out['created_on'] = dt.utcnow()
     
     data_out['picture'] = "default.jpg"
     
@@ -147,9 +158,30 @@ def display_recipe(recipe_id):
     recipe['cuisine_name'] = cuisine['name']
     recipe['category_name'] = category['name']
     
+    timestamp = recipe['created_on']
+    recipe['created_on_str'] = timestamp.strftime('%m/%d/%Y')
+        
+    if 'modified_on' in recipe:
+        timestamp = recipe['modified_on']
+        recipe['modified_on_str'] = timestamp.strftime('%m/%d/%Y') #('%m/%d/%Y %H:%M')
+    
+    """ Simple proces for verifing that this is an unique visit in this session """
+    if not session: 
+        session['viewed'] = []
+    
+    if recipe_id not in session['viewed']:
+        li = session['viewed']
+        li.append(recipe_id)
+        session['viewed'] = li
+        mongo.db.recipes.update(
+            { '_id': ObjectId(recipe_id)},
+            { '$inc': { 'views': 1 } }
+        )
+        recipe['views'] += 1
+    
     return render_template('recipe.html',
                             title='{0} | {1}'.format(page_title, recipe["name"]),
-                            is_owner = True, ## in the future to be used to verify the user, currentlly set to accept all users
+                            is_owner = True, ## in the future to be used to verify the user, currentlly set to allow all users edit privelages
                             recipe=recipe)
 
 
@@ -217,6 +249,9 @@ def edit_recipe_post(recipe_id):
                 'is_gluten_free':   True if 'is_gluten_free' in request.form  else False,
                 'ingredients': ingredients,
                 'preperation': steps
+            },
+            '$currentDate': {
+                'modified_on': { '$type': 'date' }
             }
         }
     )

@@ -12,7 +12,7 @@
 </header>
 
 <main role="main" class="container">
-  <div class="row border-top border-bottom border-primary py-4 ">
+  <div class="row border-top border-bottom border-primary pt-4 ">
 
     <aside class="col-md-4 mb-sm-5">
       <div class="sidebar bg-light shadow-sm p-3 pb-5">
@@ -122,7 +122,17 @@
       </div>
       {% endif %}
     </div>
+
+    <div class="col-12 d-flex justify-content-around text-muted mt-2">
+      <small class="black">Created: {{recipe.created_on_str}}</small>
+      {% if recipe.modified_on_str is defined %}
+      <small class="black">Last Edited: {{recipe.modified_on_str}}</small>
+      {% endif %}
+      <small class="black">Views: {{recipe.views | int}}</small>
+    </div>
+
   </div>
+
 
   <div class="row my-2 d-flex justify-content-around">
     {% for review in recipe.reviews %}
@@ -171,16 +181,16 @@
 
                 <div class="col-6 h-100">
                   <div id="rating_block" class="d-flex flex-nowrap align-items-center">
-                    <span id="rate1"  class="spoon text-primary"> <i class="fas fa-utensil-spoon "></i> </span>
-                    <span id="rate2"  class="spoon text-primary"> <i class="fas fa-utensil-spoon"></i> </span>
-                    <span id="rate3"  class="spoon text-primary"> <i class="fas fa-utensil-spoon"></i> </span>
-                    <span id="rate4"  class="spoon text-primary"> <i class="fas fa-utensil-spoon"></i> </span>
-                    <span id="rate5"  class="spoon text-primary"> <i class="fas fa-utensil-spoon"></i> </span>
+                    <span id="rate1" class="spoon text-primary"> <i class="fas fa-utensil-spoon "></i> </span>
+                    <span id="rate2" class="spoon text-primary"> <i class="fas fa-utensil-spoon"></i> </span>
+                    <span id="rate3" class="spoon text-primary"> <i class="fas fa-utensil-spoon"></i> </span>
+                    <span id="rate4" class="spoon text-primary"> <i class="fas fa-utensil-spoon"></i> </span>
+                    <span id="rate5" class="spoon text-primary"> <i class="fas fa-utensil-spoon"></i> </span>
                     <input type="number" id="rating_counter" name="rating" value=5 hidden>
                   </div>
                 </div>
-                <div class="col-12"> 
-                  <textarea class="form-control w-100" name="description" rows=3 placeholder="Short review (max: 500 letters)" maxlength="500"></textarea> 
+                <div class="col-12">
+                  <textarea class="form-control w-100" name="description" rows=3 placeholder="Short review (max: 500 letters)" maxlength="500"></textarea>
                 </div>
               </div>
             </div>

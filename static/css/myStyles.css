@@ -2,7 +2,15 @@
 
 body {
     font-family: "Merriweather Sans", Helvetica, Arial, sans-serif;
-    background-color:#f8f9fa;
+    font-size: 14px;
+    background-color: #f8f9fa;
+}
+
+#main-header {
+    font-family: "Courgette", sans-serif;
+    color: var(--primary) !important;
+    font-size: 2.5rem;
+    line-height: 1.5em
 }
 
 .navbar-brand {
@@ -104,6 +112,11 @@ footer#main-footer {
     object-fit: cover;
 }
 
+.object-fit-contain {
+    object-fit: contain;
+    object-position: 50% 50%;
+}
+
 .spoon {
     display: inline-block;
     width: 30px;
@@ -115,6 +128,13 @@ footer#main-footer {
     font-size: 22px;
     display: inline-block;
     cursor: pointer;
+}
+
+#receipe-showcase {
+    height: auto;
+    width: auto;
+    overflow: hidden;
+    max-height: 50vh;
 }
 
 input[type=number]::-webkit-inner-spin-button,
@@ -139,11 +159,19 @@ input[type=number] {
         font-weight: 300;
         line-height: 1.2;
     }
+
+    #main-header {
+        font-size: 3rem;
+    }
 }
 
 /* Medium devices (tablets, 768px and up) */
 
-@media (min-width: 768px) {}
+@media (min-width: 768px) {
+    #main-header {
+        font-size: 4rem;
+    }
+}
 
 /* Large devices (desktops, 992px and up) */
 
