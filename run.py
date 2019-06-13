@@ -118,6 +118,29 @@ def recipes_by_cuisine(cuisine_id):
                             cuisine_name=cuisine_name,
                             recipes_list=recipes_list)
 
+
+@app.route("/recipes/search", methods=["GET", "POST"])
+def search_post():
+    results = []
+    query = request.form['query'].lower()
+    
+    search_list = mongo.db.recipes.find({}, {'_id' ,'name', 'description', 'author', 'picture'})
+    
+    for item in search_list:
+        found = False
+        for key, value in item.items():
+            if key == 'name'or key == 'description' or key == 'author':
+                if value.lower().find(query) > -1:
+                    found = True
+        
+        if found:
+            results.append(item)
+    
+    return render_template('recipes.html',
+                            title='%s | Search Results' % page_title,
+                            recipes_list=results)
+
+
 @app.route("/recipes/add")
 def add_recipe():
     categories = mongo.db.categories.find()
