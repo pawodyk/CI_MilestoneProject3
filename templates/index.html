@@ -7,37 +7,38 @@
     </div>
   </div>
   <div class="row no-gutters">
-    <div class="col-12 carusel-container">
-        <div id="receipe-showcase" class="carousel slide" data-ride="carousel">
-          <ol class="carousel-indicators">
-            {% for recipe in top_recipes %}
-            <li data-target="#receipe-showcase" data-slide-to="{{loop.index - 1}}" class="{%if loop.index == 1 %} active {%endif%}"></li>
-            {%endfor%}
-          </ol>
-          <div class="carousel-inner bg-darkglass">
-            {% for recipe in top_recipes %}
-            <div class="carousel-item {%if loop.index == 1 %} active {%endif%}">
+    <div class="col-12 carousel-container">
+      <div id="recipe-showcase" class="carousel slide" data-ride="carousel">
+        <ol class="carousel-indicators">
+          {% for recipe in top_recipes %}
+          <li data-target="#recipe-showcase" data-slide-to="{{loop.index - 1}}" class="{%if loop.index == 1 %} active {%endif%}"></li>
+          {%endfor%}
+        </ol>
+        <div class="carousel-inner">
+          {% for recipe in top_recipes %}
+          <div class="carousel-item {%if loop.index == 1 %} active {%endif%}">
+            <a href="{{ url_for('display_recipe', recipe_id=recipe._id) }}">
               <div class="image-container">
                 <img src="{{ url_for('static', filename='img/{}'.format(recipe.picture)) }}" class="d-block mx-auto img-fluid object-fit-cover" alt="...">
               </div>
 
               <div class="carousel-caption d-block bg-darkglass">
                 <h5>{{recipe.name}}</h5>
-                <p class="d-none d-sm-inline">{{recipe.description}}</p>
+                <div class="d-none d-sm-block">{{recipe.description}}</div>
               </div>
-            </div>
-            {%endfor%}
+            </a>
           </div>
-          <a class="carousel-control-prev" href="#receipe-showcase" role="button" data-slide="prev">
-            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-            <span class="sr-only">Previous</span>
-          </a>
-          <a class="carousel-control-next" href="#receipe-showcase" role="button" data-slide="next">
-            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-            <span class="sr-only">Next</span>
-          </a>
+          {%endfor%}
         </div>
       </div>
+      <a class="carousel-control carousel-control-prev" href="#recipe-showcase" role="button" data-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="sr-only">Previous</span>
+      </a>
+      <a class="carousel-control carousel-control-next" href="#recipe-showcase" role="button" data-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="sr-only">Next</span>
+      </a>
     </div>
   </div>
 </div>
