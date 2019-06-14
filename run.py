@@ -12,7 +12,7 @@ app = Flask(__name__)
 app.config["MONGO_DBNAME"] = os.getenv('MONGO_DBNAME', 'cookbook')
 app.config["MONGO_URI"] = os.getenv('MONGO_URI', 'mongodb://localhost:27017/cookbook')
 app.config['UPLOAD_FOLDER'] = os.getenv('UPLOAD_FOLDER', '/static/img')
-app.config['MAX_CONTENT_LENGTH'] = 2 * 1024 * 1024
+app.config['MAX_CONTENT_LENGTH'] = 512 * 1024 ## since i do not use any compression I decided to decrease the aceptable image size to 0.5 Mb
 app.secret_key = os.getenv("SECRET_KEY", "fallbacksecretvalue123")
 
 mongo = PyMongo(app)
@@ -84,34 +84,6 @@ def home():
     categories_list = []
     cuisines_list = []
     requirements_list = []
-    
-    """
-    for category in categories:
-        category_name = category['name']
-        category_id = category['_id']
-        
-        recipes_list = [ r for r in mongo.db.recipes.find({'category': str(category_id)}, {'name', 'author', 'description', 'picture', '_id', 'views'}).sort('views', -1).limit(display_limit) ]
-        recipes_count = mongo.db.recipes.find({'category': str(category_id)}).count()
-        
-        categories_list.append({'id': category_id, 'name': category['name'], 'recipes': recipes_list, 'total_recipes': recipes_count})
-        
-    for cuisine in cuisines:
-        cuisine_name = cuisine['name']
-        cuisine_id = cuisine['_id']
-        
-        recipes_list = [ r for r in mongo.db.recipes.find({'cuisine': str(cuisine_id)}, {'name', 'author', 'description', 'picture', '_id', 'views'}).sort('views', -1).limit(display_limit) ]
-        recipes_count = mongo.db.recipes.find({'cuisine': str(cuisine_id)}).count()
-        
-        cuisines_list.append({'id': cuisine_id, 'name': cuisine['name'], 'recipes': recipes_list, 'total_recipes': recipes_count})
-        
-    vegiterian = [ r for r in mongo.db.recipes.find({'is_vegiterian': True}, {'name', 'author', 'description', 'picture', '_id', 'views'}).sort('views', -1).limit(display_limit) ]
-    lactosefree = [ r for r in mongo.db.recipes.find({'is_lactose_free': True}, {'name', 'author', 'description', 'picture', '_id', 'views'}).sort('views', -1).limit(display_limit) ]
-    glutenfree = [ r for r in mongo.db.recipes.find({'is_gluten_free': True}, {'name', 'author', 'description', 'picture', '_id', 'views'}).sort('views', -1).limit(display_limit) ]
-    
-    requirements_list.append({'name': 'Vegiterian', 'recipes': vegiterian})
-    requirements_list.append({'name': 'Lactose Free', 'recipes': lactosefree})
-    requirements_list.append({'name': 'Gluten Free', 'recipes': glutenfree})
-    """
     
     dashboard_list.append({'id': 'categories', 'heading': 'Categories', 'search_key': 'category', 'list': categories})
     dashboard_list.append({'id': 'cuisines','heading': 'Cuisines', 'search_key': 'cuisine', 'list': cuisines})
@@ -391,7 +363,7 @@ def review_recipe_post(recipe_id):
             },
                 
             '$push': { 
-                'reviews.reviews': review
+                'reviews.reviews': review ##push the review to the list
             }
         }
     )
