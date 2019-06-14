@@ -1,6 +1,12 @@
 function renderIngredientElement(type, counter) {
 
-    //units = ["g", "mg", "kg", "ml", "l", "tsp", "tbsp", "cup", "glass", "whole", "half", "quater", "slice"]
+    units = ["g", "mg", "kg", "ml", "l", "tsp", "tbsp", "cup", "glass", "whole", "half", "quater", "slice"]
+
+    var options = ""
+
+    units.forEach(function(unit) {
+        options += `<option value="${unit}">${unit}</option>`
+    });
 
     if (type === "li") {
         return `
@@ -14,25 +20,13 @@ function renderIngredientElement(type, counter) {
                   <input type="number" class="form-control form-control-sm" id="ingredient${counter}_amount" name="ingredient${counter}_amount" required>
                   <div class="input-group-append">
                     <select class="custom-select custom-select-sm btn" name="ingredient${counter}_unit" id="ingredient${counter}_unit">
-                        <option value="g">g</option>
-                        <option value="mg">mg</option>
-                        <option value="kg">kg</option>
-                        <option value="ml">ml</option>
-                        <option value="l">l</option>
-                        <option value="tsp">tsp</option>
-                        <option value="tbsp">tbsp</option>
-                        <option value="cup">cup</option>
-                        <option value="glass">glass</option>
-                        <option value="whole">whole</option>
-                        <option value="half">half</option>
-                        <option value="quater">quater</option>
-                        <option value="slice">slice</option>
+                        ${options}
                     </select>
                   </div>
                 </div>
               </div>
             </div>
-          </li>`;
+         </li>`;
     }
     else if (type === "div") {
         return `
@@ -47,19 +41,7 @@ function renderIngredientElement(type, counter) {
               <input type="number" class="form-control" id="ingredient${counter}_amount" name="ingredient${counter}_amount" required>
               <div class="input-group-append">
                 <select class="custom-select btn" name="ingredient${counter}_unit" id="ingredient${counter}_unit">
-                    <option value="g">g</option>
-                    <option value="mg">mg</option>
-                    <option value="kg">kg</option>
-                    <option value="ml">ml</option>
-                    <option value="l">l</option>
-                    <option value="tsp">tsp</option>
-                    <option value="tbsp">tbsp</option>
-                    <option value="cup">cup</option>
-                    <option value="glass">glass</option>
-                    <option value="whole">whole</option>
-                    <option value="half">half</option>
-                    <option value="quater">quater</option>
-                    <option value="slice">slice</option>
+                    ${options}
                 </select>
               </div>
             </div>
@@ -128,54 +110,54 @@ $('#btn-rm-step').click(function() {
 
 $('#rating_block').children('span').click(function() {
 
-    
-    if($(this).attr('id') === "rate1" ){
+
+    if ($(this).attr('id') === "rate1") {
         colorSpoon("rate2", false);
         colorSpoon("rate3", false);
         colorSpoon("rate4", false);
         colorSpoon("rate5", false);
         $('#rating_counter').attr('value', 1);
-    } 
-    else if($(this).attr('id') === "rate2" ){
+    }
+    else if ($(this).attr('id') === "rate2") {
         colorSpoon("rate2", true);
         colorSpoon("rate3", false);
         colorSpoon("rate4", false);
         colorSpoon("rate5", false);
         $('#rating_counter').attr('value', 2);
     }
-    else if($(this).attr('id') === "rate3" ){
+    else if ($(this).attr('id') === "rate3") {
         colorSpoon("rate2", true);
         colorSpoon("rate3", true);
         colorSpoon("rate4", false);
         colorSpoon("rate5", false);
         $('#rating_counter').attr('value', 3);
     }
-    else if($(this).attr('id') === "rate4" ){
+    else if ($(this).attr('id') === "rate4") {
         colorSpoon("rate2", true);
         colorSpoon("rate3", true);
         colorSpoon("rate4", true);
         colorSpoon("rate5", false);
         $('#rating_counter').attr('value', 4);
     }
-    else if($(this).attr('id') === "rate5" ){
+    else if ($(this).attr('id') === "rate5") {
         colorSpoon("rate2", true);
         colorSpoon("rate3", true);
         colorSpoon("rate4", true);
         colorSpoon("rate5", true);
         $('#rating_counter').attr('value', 5);
     }
-    
+
     // let x = 0;
-    
-    
+
+
     // if      ($(this).attr('id') === "rate1")   x = 1
     // else if ( $(this).attr('id') === "rate2")  x = 2
     // else if ( $(this).attr('id') === "rate3")  x = 3
     // else if ( $(this).attr('id') === "rate4")  x = 4
     // else if ( $(this).attr('id') === "rate5")  x = 5
-    
+
     // for (var i = 1; i < x  i--; ) {
-        
+
     // }
 
 })
