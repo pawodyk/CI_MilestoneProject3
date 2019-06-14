@@ -4,17 +4,23 @@ from datetime import datetime as dt
 from flask import Flask, render_template, url_for, redirect, request, session
 from flask_pymongo import PyMongo
 from bson.objectid import ObjectId
+from werkzeug.utils import secure_filename
+
 
 
 app = Flask(__name__)
 app.config["MONGO_DBNAME"] = os.getenv('MONGO_DBNAME', 'cookbook')
 app.config["MONGO_URI"] = os.getenv('MONGO_URI', 'mongodb://localhost:27017/cookbook')
+app.config['UPLOAD_FOLDER'] = os.getenv('UPLOAD_FOLDER', './static/img')
+app.config['MAX_CONTENT_LENGTH'] = 2 * 1024 * 1024
 app.secret_key = os.getenv("SECRET_KEY", "fallbacksecretvalue123")
+
 
 
 mongo = PyMongo(app)
 
 page_title = os.getenv("PAGE_TITLE", "Open Cookbook")
+ALLOWED_EXTENSIONS = set(['jpg', 'jpeg', 'png'])
 
 units = ["g", "mg","kg","ml","l","tsp","tbsp","cup","glass","whole","half","quater","slice"]
 # aceptable_sort_types = ['newest', 'oldest', 'views', 'revies', 'score']
@@ -108,10 +114,6 @@ def recipes():
     recipes = mongo.db.recipes.find().sort(sort[0], sort[1])
     recipes_list = [recipe for recipe in recipes]
     
-    print("sort:", sort)
-    for recipe in recipes_list:
-        print(recipe['name'] + "\t:", recipe['views'], recipe['created_on'].strftime('%d/%m/%Y'), recipe['reviews']['total_number'], recipe['reviews']['avg_score'])
-    
     return render_template('recipes.html', 
                             title='%s | Recipes' % page_title,
                             recipes_list=recipes_list)
@@ -126,10 +128,6 @@ def recipes_by_category(category_id):
     category_name = category['name']
     
     recipes_list = [recipe for recipe in recipes]
-    
-    print("sort:", sort)
-    for recipe in recipes_list:
-        print(recipe['name'] + "\t:", recipe['views'], recipe['created_on'].strftime('%d/%m/%Y'), recipe['reviews']['total_number'], recipe['reviews']['avg_score'])
     
     return render_template('recipes.html', 
                             title='{0} | Recipes for {1}'.format(page_title, category_name),
@@ -147,17 +145,13 @@ def recipes_by_cuisine(cuisine_id):
     
     recipes_list = [recipe for recipe in recipes]
     
-    print("sort:", sort)
-    for recipe in recipes_list:
-        print(recipe['name'] + "\t:", recipe['views'], recipe['created_on'].strftime('%d/%m/%Y'), recipe['reviews']['total_number'], recipe['reviews']['avg_score'])
-    
     return render_template('recipes.html', 
                             title='{0} | Recipes from {1} Cuisine'.format(page_title, cuisine_name),
                             cuisine_name=cuisine_name,
                             recipes_list=recipes_list)
 
 
-@app.route("/recipes/search", methods=["POST"])
+@app.route("/recipes/search/post", methods=["POST"])
 def search_post():
     query = request.form['query'].lower()
     
@@ -185,7 +179,6 @@ def search(query):
                             title='%s | Search Results' % page_title,
                             recipes_list=results)
 
-
 @app.route("/recipes/add")
 def add_recipe():
     categories = mongo.db.categories.find()
@@ -195,6 +188,10 @@ def add_recipe():
                             cuisines=cuisines,
                             categories=categories,
                             units=units)
+
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
 @app.route("/recepies/add/post", methods=["POST"])
@@ -240,8 +237,25 @@ def add_recipe_post():
     data_out['created_on'] = dt.utcnow()
     data_out['reviews'] = {'avg_score': 0, 'total_number': 0, 'reviews': []}
     
-    data_out['picture'] = "default.jpg"
+    # print([x for x in request.files])
     
+    # check if the post request has the file part
+    if 'file' not in request.files:
+        print('###','No file part','###')
+        data_out['picture'] = 'default.jpg'
+    else:    
+        file = request.files['file']
+        # if user does not select file, browser also
+        # submit a empty part without filename
+        if file.filename == '':
+            print('###','No selected file','###')
+            data_out['picture'] = 'default.jpg'
+            
+        elif file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            data_out['picture'] = file.filename
+            
     # print("*****")
     # print("in", data_in)
     # print("*****")
@@ -280,7 +294,7 @@ def display_recipe(recipe_id):
         li = session['viewed']
         li.append(recipe_id)
         session['viewed'] = li
-        mongo.db.recipes.update(
+        mongo.db.recipes.update_one(
             { '_id': ObjectId(recipe_id)},
             { '$inc': { 'views': 1 } }
         )
@@ -288,7 +302,7 @@ def display_recipe(recipe_id):
     
     return render_template('recipe.html',
                             title='{0} | {1}'.format(page_title, recipe["name"]),
-                            is_owner = True, ## in the future to be used to verify the user, currentlly set to allow all users edit privelages
+                            is_owner = True, ## in the future to be used to verify the user, currentlly set to allow all users edit privelages, to prevent edits set to False
                             recipe=recipe)
 
 
