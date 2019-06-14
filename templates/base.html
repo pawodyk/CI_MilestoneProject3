@@ -35,7 +35,7 @@
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="dropdown-categories" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Recipes by Category</a>
             <div class="dropdown-menu" aria-labelledby="dropdown-categories">
-              {% for category in categories_list %}
+              {% for category in categories_all %}
               <a class="dropdown-item" href="{{url_for('recipes_by_category', category_id=category._id)}}">{{category.name}}</a> 
               {% endfor %}
             </div>
@@ -43,7 +43,7 @@
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="dropdown-cuisines" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Recipes by Cuisine</a>
             <div class="dropdown-menu" aria-labelledby="dropdown-cuisines">
-              {% for cuisine in cuisines_list %}
+              {% for cuisine in cuisines_all %}
               <a class="dropdown-item" href="{{url_for('recipes_by_cuisine', cuisine_id=cuisine._id)}}">{{cuisine.name}} Cuisine</a> 
               {% endfor %}
             </div>

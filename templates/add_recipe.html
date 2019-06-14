@@ -24,7 +24,7 @@
         <label for="recipe_category">Category</label>
         <select id="recipe_category" name="category" class="custom-select" required>
           <option disabled selected>Please select the category</option>
-            {% for category in categories %}
+            {% for category in categories_all %}
             <option value="{{category._id}}">{{category.name}}</option>
             {% endfor %}
           </select>
@@ -33,7 +33,7 @@
         <label for="recipe_cuisine">Cuisine</label>
         <select id="recipe_cuisine" name="cuisine" class="custom-select" required>
               <option disabled selected>Please select the cuisine</option>
-              {% for cuisine in cuisines %}
+              {% for cuisine in cuisines_all %}
               <option value="{{cuisine._id}}">{{cuisine.name}}</option>
               {% endfor %}
             </select>

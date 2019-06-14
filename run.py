@@ -7,18 +7,18 @@ from bson.objectid import ObjectId
 from werkzeug.utils import secure_filename
 
 
-
+"""APPLICATION CONFIGURATATION AND INITIALIZATION"""
 app = Flask(__name__)
 app.config["MONGO_DBNAME"] = os.getenv('MONGO_DBNAME', 'cookbook')
 app.config["MONGO_URI"] = os.getenv('MONGO_URI', 'mongodb://localhost:27017/cookbook')
-app.config['UPLOAD_FOLDER'] = os.getenv('UPLOAD_FOLDER', './static/img')
+app.config['UPLOAD_FOLDER'] = os.getenv('UPLOAD_FOLDER', '/static/img')
 app.config['MAX_CONTENT_LENGTH'] = 2 * 1024 * 1024
 app.secret_key = os.getenv("SECRET_KEY", "fallbacksecretvalue123")
 
-
-
 mongo = PyMongo(app)
 
+
+"""GLOBAL VARIABLES"""
 page_title = os.getenv("PAGE_TITLE", "Open Cookbook")
 ALLOWED_EXTENSIONS = set(['jpg', 'jpeg', 'png'])
 
@@ -26,21 +26,50 @@ units = ["g", "mg","kg","ml","l","tsp","tbsp","cup","glass","whole","half","quat
 # aceptable_sort_types = ['newest', 'oldest', 'views', 'revies', 'score']
 
 
+"""HELPER METHODS"""
+"""code from flask deocumentation responsible for ensuring that files upladed by the user are only in the allowed format"""
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
+
+"""helper method returns the infomation needed to for the pymongo sort query"""
+def sort_method(sort):
+    
+    sort_type = 'views'
+    sort_order = -1
+    if sort != 'views':
+        if sort == 'new':
+            sort_type = 'created_on'
+            sort_order = -1
+        elif sort == 'old':
+            sort_type = 'created_on'
+            sort_order = 1
+        elif sort == 'review':
+            sort_type = 'reviews.total_number'
+            sort_order = -1
+        elif sort == 'score':
+            sort_type = 'reviews.avg_score'
+            sort_order = -1
+            
+    return [sort_type, sort_order]
+
+
+"""GENERAL WEBSITE FUNCTIONS"""
+"""inject the data needed by the base, edit_recipe and add_recipe template"""
 @app.context_processor
 def inject_categories():
-    categories_mongo = mongo.db.categories.find()
-    
-    return dict(categories_list=categories_mongo)
+    """upload categories so they can be used the templates"""
+    categories_list = [category for category in mongo.db.categories.find()]
+    return dict(categories_all=categories_list)
     
 @app.context_processor
-def inject_cuisne():
-    cuisines_mongo = mongo.db.cuisines.find()
+def inject_cuisnes():
+    """upload cuisines so they can be used the templates"""
+    cuisines_list = [cuisine for cuisine in mongo.db.cuisines.find()]
+    return dict(cuisines_all=cuisines_list)
 
-    return dict(cuisines_list=cuisines_mongo)
 
-
-
+"""render home page, set up the data used in the carauses and dashboard generation"""
 @app.route("/")
 def home():
     top_recipes = [recipe for recipe in mongo.db.recipes.find().sort('views', -1).limit(5)]
@@ -87,26 +116,8 @@ def home():
                             cuisines=cuisines_list,
                             requirements=requirements_list)
 
-def sort_method(sort):
-    
-    sort_type = 'views'
-    sort_order = -1
-    if sort != 'views':
-        if sort == 'new':
-            sort_type = 'created_on'
-            sort_order = -1
-        elif sort == 'old':
-            sort_type = 'created_on'
-            sort_order = 1
-        elif sort == 'review':
-            sort_type = 'reviews.total_number'
-            sort_order = -1
-        elif sort == 'score':
-            sort_type = 'reviews.avg_score'
-            sort_order = -1
-            
-    return [sort_type, sort_order]
 
+"""renders the list of all the recipes"""
 @app.route("/recipes")
 def recipes():
     sort = sort_method(request.args.get('sort', ' views'))
@@ -118,7 +129,8 @@ def recipes():
                             title='%s | Recipes' % page_title,
                             recipes_list=recipes_list)
                             
-                            
+
+"""renders the list of recipes filtered by the category"""
 @app.route("/recipes/filterby/category/<category_id>")
 def recipes_by_category(category_id):
     sort = sort_method(request.args.get('sort', ' views'))
@@ -135,6 +147,7 @@ def recipes_by_category(category_id):
                             recipes_list= recipes_list)
 
 
+"""renders the list of recipes filtered by the cuisine"""
 @app.route("/recipes/filterby/cuisine/<cuisine_id>")
 def recipes_by_cuisine(cuisine_id):
     sort = sort_method(request.args.get('sort', ' views'))
@@ -151,12 +164,15 @@ def recipes_by_cuisine(cuisine_id):
                             recipes_list=recipes_list)
 
 
+"""takes the query data for search and pass it to search function"""
 @app.route("/recipes/search/post", methods=["POST"])
 def search_post():
     query = request.form['query'].lower()
     
     return redirect(url_for('search', query=query))
-    
+
+
+"""completes the search opperation and renders search results"""
 @app.route("/recipes/search/<query>")
 def search(query):
     sort = sort_method(request.args.get('sort', ' views'))
@@ -165,6 +181,7 @@ def search(query):
     
     search_list = mongo.db.recipes.find().sort(sort[0], sort[1])
     
+    #checks is the query in the following fileds: name, description, author
     for item in search_list:
         found = False
         for key, value in item.items():
@@ -172,6 +189,7 @@ def search(query):
                 if value.lower().find(query) > -1:
                     found = True
         
+        #if data was found it is appended to the results list
         if found:
             results.append(item)
     
@@ -179,30 +197,30 @@ def search(query):
                             title='%s | Search Results' % page_title,
                             recipes_list=results)
 
+
+"""renders the teplate for adding the recipe"""
 @app.route("/recipes/add")
 def add_recipe():
-    categories = mongo.db.categories.find()
-    cuisines = mongo.db.cuisines.find()
+
     return render_template('add_recipe.html',
                             title='%s | Add Recipe' % page_title,
-                            cuisines=cuisines,
-                            categories=categories,
                             units=units)
 
 
-def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
-
+"""handles the data passed from the form in add_recipe page
+    very important function as it is responsible for seting up a schema structure
+    and ensuring the data is in the correct fields"""
 @app.route("/recepies/add/post", methods=["POST"])
 def add_recipe_post():
-    # data_in = request.form.to_dict()
-    data_out = {}
-    # [ print(x, data_in[x]) for x in data_in ] ##print data for debuging
     
+    ### declaring empty containers to hold a data
+    data_out = {}
     ingredients = []
     steps = []
     
+    ### handles itteration throug all the ingrediants,
+    ### the ingrediendt are dynamicly added to the page so the total number of ingredients is not hard coded
+    ### the data is then added to the directory so it could be added to mongodb as a bson object
     ingredients_num = int( request.form['ingredient_counter'] )
     for i in range(1, ingredients_num + 1):
         ingredient = {} 
@@ -211,10 +229,15 @@ def add_recipe_post():
         ingredient['ingredient_unit']   = request.form['ingredient%s_unit' % i]
         ingredients.append(ingredient)
     
+    ### handles itteration throug all the steps,
+    ### similarlly to ingredients the steps are dynamicly added
+    ### but since the data structure is an array the information is just appended to the list
     steps_num = int( request.form['steps_counter'] )
     for step_no in range(1, steps_num + 1):
         steps.append(request.form['recipe_step_%s' % step_no])
-            
+    
+    ### handles the data assignment to the appropriate fields
+    ### for simplicity the form input names match the database fields names
     data_out['name']        = request.form['name'].title()
     data_out['author']      = request.form['author'].title()
     data_out['description'] = request.form['description'].capitalize()
@@ -224,21 +247,22 @@ def add_recipe_post():
     data_out['cuisine']     = request.form['cuisine']
     data_out['category']    = request.form['category']
     
+    ### extract and assignes data from checkboxes
     data_out['is_vegiterian']   = True if 'is_vegiterian'in request.form    else False
     data_out['is_lactose_free'] = True if 'is_lactose_free' in request.form else False
     data_out['is_gluten_free']  = True if 'is_gluten_free' in request.form  else False
     
-    #data_out[''] = request.form['']
+    ### adds the data structures for ingredients and steps to the appropraitate fields
     data_out['ingredients'] = ingredients
     data_out['preperation'] = steps
     
-    
+    ### set up other fields that are not set by the form but are important for data cohesion
     data_out['views'] = 0
     data_out['created_on'] = dt.utcnow()
     data_out['reviews'] = {'avg_score': 0, 'total_number': 0, 'reviews': []}
     
-    # print([x for x in request.files])
-    
+
+    """sample file upload taken from the flask documentation and modified"""
     # check if the post request has the file part
     if 'file' not in request.files:
         print('###','No file part','###')
@@ -255,17 +279,13 @@ def add_recipe_post():
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             data_out['picture'] = file.filename
-            
-    # print("*****")
-    # print("in", data_in)
-    # print("*****")
-    # print("out", data_out)
-    # print("*****")
     
+    ### inserts data to the mongo database and redirects user to the list of recipes
     mongo.db.recipes.insert_one(data_out)
     return redirect( url_for('recipes') )
     
 
+"""handles all the data used to render the template for each recipe"""
 @app.route("/recipe/<recipe_id>")
 def display_recipe(recipe_id):
     recipe = mongo.db.recipes.find_one({'_id':ObjectId(recipe_id)})
@@ -273,15 +293,17 @@ def display_recipe(recipe_id):
     category_id = recipe['category']
     
     
-    cuisine = mongo.db.cuisines.find_one({'_id':ObjectId(cuisine_id)})
-    category = mongo.db.categories.find_one({'_id':ObjectId(category_id)})
+    cuisine = mongo.db.cuisines.find_one({'_id':ObjectId(cuisine_id)}, {'name'})
+    category = mongo.db.categories.find_one({'_id':ObjectId(category_id)}, {'name'})
     
+    ### for simplicity the cuisine name and category name are directlly inserted into recipe list
     recipe['cuisine_name'] = cuisine['name']
     recipe['category_name'] = category['name']
     
     timestamp = recipe['created_on']
     recipe['created_on_str'] = timestamp.strftime('%d/%m/%Y')
-        
+    
+    ### modified_on is not a mandatory field so i check for its existance
     if 'modified_on' in recipe:
         timestamp = recipe['modified_on']
         recipe['modified_on_str'] = timestamp.strftime('%d/%m/%Y') #('%d/%m/%Y %H:%M')
@@ -298,22 +320,21 @@ def display_recipe(recipe_id):
             { '_id': ObjectId(recipe_id)},
             { '$inc': { 'views': 1 } }
         )
-        recipe['views'] += 1
+        recipe['views'] += 1 # append the views in the list so the user sees that his visit is included in the views important for the newly added recipes
+    
     
     return render_template('recipe.html',
                             title='{0} | {1}'.format(page_title, recipe["name"]),
                             is_owner = True, ## in the future to be used to verify the user, currentlly set to allow all users edit privelages, to prevent edits set to False
                             recipe=recipe)
 
-
+"""handles the process of posting the review"""
 @app.route("/recipe/<recipe_id>/review/post", methods=["POST"])
 def review_recipe_post(recipe_id):
     review = request.form.to_dict()
     review['date'] = dt.utcnow()
     
-    
     all_reviews = mongo.db.recipes.find_one({'_id': ObjectId(recipe_id)}, {'reviews'})
-    
     
     size = len(all_reviews['reviews']['reviews']) + 1
     score = 0
@@ -321,8 +342,6 @@ def review_recipe_post(recipe_id):
         score += int(review['rating'])
         
     score = (score + int(review['rating'])) // size
-    
-    
     
     mongo.db.recipes.update_one(
         {'_id': ObjectId(recipe_id)},
@@ -337,23 +356,22 @@ def review_recipe_post(recipe_id):
             }
         }
     )
+    
     return redirect(url_for('display_recipe', recipe_id=recipe_id))
     
 
-
+"""renders the page for edit_recipe"""
 @app.route("/recipe/<recipe_id>/edit")
 def edit_recipe(recipe_id):
     recipe = mongo.db.recipes.find_one({'_id':ObjectId(recipe_id)})
-    categories = mongo.db.categories.find()
-    cuisines = mongo.db.cuisines.find()
+
     return render_template('edit_recipe.html',
                             title='{0} | Editing: {1}'.format(page_title, recipe["name"]),
                             units=units,
-                            recipe=recipe,
-                            categories=categories,
-                            cuisines=cuisines)
+                            recipe=recipe)
     
-
+    
+"""handles the data provided by the user in edit recipe fileds"""
 @app.route("/recipe/<recipe_id>/edit/post", methods=["POST"])
 def edit_recipe_post(recipe_id):
     
@@ -399,18 +417,32 @@ def edit_recipe_post(recipe_id):
     return redirect(url_for('display_recipe', recipe_id=recipe_id))
 
 
+"""renders the confirmation page for delation operation"""
 @app.route("/recipe/<recipe_id>/confirm-deletion")
 def delete_recipe(recipe_id):
+    recipe = mongo.db.recipes.find_one({'_id':ObjectId(recipe_id)})
+    cuisine_id = recipe['cuisine']
+    category_id = recipe['category']
+    
+    cuisine = mongo.db.cuisines.find_one({'_id':ObjectId(cuisine_id)}, {'name'})
+    category = mongo.db.categories.find_one({'_id':ObjectId(category_id)}, {'name'})
+    
+    recipe['cuisine_name'] = cuisine['name']
+    recipe['category_name'] = category['name']
+    
     return render_template('delete_recipe.html', 
-                            recipe=mongo.db.recipes.find_one({'_id':ObjectId(recipe_id)}))
+                            recipe=recipe)
 
 
+"""sends the delate operation to the server"""
 @app.route("/recipe/<recipe_id>/deleted")
 def delete_recipe_confirmed(recipe_id):
     mongo.db.recipes.remove({'_id':ObjectId(recipe_id)})
     return redirect(url_for('recipes'))
     
 
+
+"""MAIN FUNCTION"""
 if __name__ == "__main__": 
     app.run(host=os.environ.get('IP', '127.0.0.1'), 
             port=int(os.environ.get('PORT', 5000)), 
