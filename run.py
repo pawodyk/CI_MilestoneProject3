@@ -17,6 +17,7 @@ mongo = PyMongo(app)
 page_title = os.getenv("PAGE_TITLE", "Open Cookbook")
 
 units = ["g", "mg","kg","ml","l","tsp","tbsp","cup","glass","whole","half","quater","slice"]
+# aceptable_sort_types = ['newest', 'oldest', 'views', 'revies', 'score']
 
 
 
@@ -83,8 +84,30 @@ def home():
 
 @app.route("/recipes")
 def recipes():
-    recipes = mongo.db.recipes.find()
+    sort = request.args.get('sort', ' views')
+    print(sort)
+    
+    sort_type = 'views'
+    sort_order = -1
+    if sort != 'views':
+        if sort == 'new':
+            sort_type = 'created_on'
+            sort_order = -1
+        elif sort == 'old':
+            sort_type = 'created_on'
+            sort_order = 1
+        elif sort == 'review':
+            sort_type = 'reviews.total_number'
+            sort_order = -1
+        elif sort == 'score':
+            sort_type = 'reviews.avg_score'
+            sort_order = -1
+    
+    recipes = mongo.db.recipes.find().sort(sort_type, sort_order)
     recipes_list = [recipe for recipe in recipes]
+    
+    for recipe in recipes_list:
+        print(recipe['name'], recipe['reviews']['total_number'], recipe['reviews']['avg_score'])
     
     return render_template('recipes.html', 
                             title='%s | Recipes' % page_title,
@@ -118,6 +141,21 @@ def recipes_by_cuisine(cuisine_id):
                             cuisine_name=cuisine_name,
                             recipes_list=recipes_list)
 
+
+app.route("/recipes/filterby/cuisine/<cuisine_id>")
+def recipes_by_cuisine(cuisine_id):
+    recipes = mongo.db.recipes.find({'cuisine': cuisine_id})
+    cuisine = mongo.db.cuisines.find_one({'_id': ObjectId(cuisine_id)})
+    cuisine_name = cuisine['name']
+    
+    print(sort_method)
+    
+    recipes_list = [recipe for recipe in recipes]
+    
+    return render_template('recipes.html', 
+                            title='{0} | Recipes from {1} Cuisine'.format(page_title, cuisine_name),
+                            cuisine_name=cuisine_name,
+                            recipes_list=recipes_list)
 
 @app.route("/recipes/search", methods=["GET", "POST"])
 def search_post():
@@ -189,8 +227,11 @@ def add_recipe_post():
     #data_out[''] = request.form['']
     data_out['ingredients'] = ingredients
     data_out['preperation'] = steps
+    
+    
     data_out['views'] = 0
     data_out['created_on'] = dt.utcnow()
+    data_out['reviews'] = {'avg_score': 0, 'total_number': 0, 'reviews': []}
     
     data_out['picture'] = "default.jpg"
     
@@ -247,12 +288,31 @@ def display_recipe(recipe_id):
 @app.route("/recipe/<recipe_id>/review/post", methods=["POST"])
 def review_recipe_post(recipe_id):
     review = request.form.to_dict()
+    review['date'] = dt.utcnow()
+    
+    
+    all_reviews = mongo.db.recipes.find_one({'_id': ObjectId(recipe_id)}, {'reviews'})
+    
+    
+    size = len(all_reviews['reviews']['reviews']) + 1
+    score = 0
+    for review in all_reviews['reviews']['reviews']:
+        score += int(review['rating'])
+        
+    score = (score + int(review['rating'])) // size
+    
+    
     
     mongo.db.recipes.update_one(
         {'_id': ObjectId(recipe_id)},
         {
+            '$set': {
+                'reviews.avg_score': score,
+                'reviews.total_number': size  
+            },
+                
             '$push': { 
-                'reviews': review
+                'reviews.reviews': review
             }
         }
     )

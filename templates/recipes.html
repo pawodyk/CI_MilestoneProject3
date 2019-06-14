@@ -6,12 +6,16 @@
     Recipes {% if category_name is defined %} for {{category_name}} {% elif cuisine_name is defined %} from {{cuisine_name}} Cuisine {% endif %}
   </h1>
   <div class="row d-flex justify-content-between m-2">
-    <a class="btn btn-success px-3" href="{{ url_for('add_recipe') }}">Add Recipe + </a>
-    <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#sory-by" aria-expanded="false" aria-controls="collapseExample">Sort</button>
-  </div>
-  <div class="collapse" id="sory-by">
-    <div class="card card-body">
-      Placeholder
+    <a class="btn btn-success px-3" href="{{ url_for('add_recipe') }}">Add Recipe <i class="fas fa-plus"></i> </a>
+    <div class="dropdown">
+      <button class="btn btn-primary dropdown-toggle" type="button" id="sortButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Sort by</button>
+      <div class="dropdown-menu" aria-labelledby="sortButton">
+        <a class="dropdown-item" href="?sort=new">Newest</a>
+        <a class="dropdown-item" href="?sort=old">Oldest</a>
+        <a class="dropdown-item" href="?sort=views">Most Views</a>
+        <a class="dropdown-item" href="?sort=review">Most Reviews</a>
+        <a class="dropdown-item" href="?sort=score">Best Score</a>
+      </div>
     </div>
   </div>
 
