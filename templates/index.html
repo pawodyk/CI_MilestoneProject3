@@ -28,7 +28,7 @@
                 </div>
 
                 <div class="carousel-caption d-block bg-darkglass">
-                  <h5>{{recipe.name}}</h5>
+                  <h4>{{recipe.name}}</h4>
                   <div class="d-none d-sm-block">{{recipe.description}}</div>
                 </div>
               </a>
@@ -69,147 +69,22 @@
           <h2 class="font-weight-light font-italic fs-25 p3-">Recipes Dashboard</h2>
         </div>
 
-
+        {% for group in dashboard %}
         <div class="col-12 py-3 border-bottom border-primary">
-          <h3>Categories</h3>
-          <div class="accordion" id="categories-accordion">
+          <h3>{{group.heading}}</h3>
+          <div class="accordion" id="{{group.id}}-accordion">
 
-            {% for category in categories %}
+            {% for item in group.list %}
             <div class="card">
-              <div class="card-header" id="categories-heading{{loop.index}}">
+              <div class="card-header" id="{{group.id}}-heading{{loop.index}}">
                 <h3 class="mb-0">
-                  <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#categories-collapse{{loop.index}}" aria-expanded="false" aria-controls="categories-collapse{{loop.index}}">
-                  {{category.name}}
-                  </button>
-                </h3>
-              </div>
-
-              <div id="categories-collapse{{loop.index}}" class="collapse" data-parent="#categories-accordion">
-                <div class="card-body p-2">
-
-                  {% if category.recipes %}
-                  <div class="row p-1 d-flex flex-grow-1 align-content-center flex-wrap ">
-                    {% for recipe in category.recipes %}
-                    <div class="col-12 col-lg-6 p-1">
-                      <a href="{{ url_for('display_recipe', recipe_id=recipe._id) }}">
-                        <div class="card bg-dark text-light d-flex align-items-end" style="height: 400px;">
-                          <img src="{{ url_for('static', filename='img/{0}'.format(recipe.picture)) }}" class="card-img h-100 object-fit-cover" alt="picture of {{recipe.name}}">
-                          <div class="card-img-overlay overflow-auto align-items-start flex-column h-100 rounded">
-                            <div class="bg-darkglass p-2 text-wrap mb-auto ">
-                              <h2 class="card-title font-weight-bold">{{recipe.name}}</h2>
-                              <h3 class="card-text">by&nbsp;<span class="text-capitalize font-italic">{{ recipe.author }}</span></h3>
-                              <p class="card-text">{{ recipe.description }}</p>
-                            </div>
-                          </div>
-                        </div>
-                      </a>
-                    </div>
-                    {% endfor %}
-                    <a href="{{url_for('recipes_by_category', category_id=category.id)}}" class="btn btn-primary col-12">
-                      <span>View all recipes in {{category.name}}</span>
-                      <span class="badge badge-light">{{category.total_recipes}}</span>
-                      <span class="sr-only">Number of all recipes in category</span>
-                    </a>
-                  </div>
-                  {% else %}
-                  <div class="row d-flex justify-content-center">
-                    <div class="col-auto">
-                      <div class="alert alert-primary" role="alert">
-                        <h4 class="alert-heading">No Recipies!</h4>
-                        <hr>
-                        <p>Unfortunatlly there are no recipes marked as {{category.name}}. </p>
-                        <p class="mb-0">You can add your recepie using <a href="{{ url_for('add_recipe') }}" class="badge badge-success">Add Recipe</a> button!</p>
-                      </div>
-                    </div>
-                  </div>
-                  {% endif %}
-
-                </div>
-              </div>
-            </div>
-            {% endfor %}
-
-          </div>
-        </div>
-        
-        
-        <div class="col-12 py-3 border-bottom border-primary">
-          <h3>Cuisines</h3>
-          <div class="accordion" id="cuisines-accordion">
-
-            {% for cuisine in cuisines %}
-            <div class="card">
-              <div class="card-header" id="cuisines-heading{{loop.index}}">
-                <h3 class="mb-0">
-                  <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#cuisines-collapse{{loop.index}}" aria-expanded="false" aria-controls="cuisines-collapse{{loop.index}}">
-                  {{cuisine.name}}
-                  </button>
-                </h3>
-              </div>
-
-              <div id="cuisines-collapse{{loop.index}}" class="collapse" data-parent="#cuisines-accordion">
-                <div class="card-body p-2">
-
-                  {% if cuisine.recipes %}
-                  <div class="row p-1 d-flex flex-grow-1 align-content-center flex-wrap">
-                    {% for recipe in cuisine.recipes %}
-                    <div class="col-12 col-lg-6 p-1">
-                      <a href="{{ url_for('display_recipe', recipe_id=recipe._id) }}">
-                        <div class="card bg-dark text-light d-flex align-items-end" style="height: 400px;">
-                          <img src="{{ url_for('static', filename='img/{0}'.format(recipe.picture)) }}" class="card-img h-100 object-fit-cover" alt="picture of {{recipe.name}}">
-                          <div class="card-img-overlay overflow-auto align-items-start flex-column h-100 rounded">
-                            <div class="bg-darkglass p-2 text-wrap mb-auto ">
-                              <h2 class="card-title font-weight-bold fs-10">{{recipe.name}}</h2>
-                              <h3 class="card-text fs-10">by&nbsp;<span class="text-capitalize font-italic">{{ recipe.author }}</span></h3>
-                              <p class="card-text fs-8">{{ recipe.description }}</p>
-                            </div>
-                          </div>
-                        </div>
-                      </a>
-                    </div>
-                    {% endfor %}
-                    <a href="{{url_for('recipes_by_cuisine', cuisine_id=cuisine.id)}}" class="btn btn-primary col-12">
-                      <span>View all recipes in {{cuisine.name}}</span>
-                      <span class="badge badge-light">{{cuisine.total_recipes}}</span>
-                      <span class="sr-only">Number of recipes in cuisine</span>
-                    </a>
-                  </div>
-                  {% else %}
-                  <div class="row d-flex justify-content-center">
-                    <div class="col-auto">
-                      <div class="alert alert-primary" role="alert">
-                        <h4 class="alert-heading">No Recipies!</h4>
-                        <hr>
-                        <p>Unfortunatlly there are no recipes marked as {{cuisine.name}} Cuisine. </p>
-                        <p class="mb-0">You can add your recepie using <a href="{{ url_for('add_recipe') }}" class="badge badge-success">Add Recipe</a> button!</p>
-                      </div>
-                    </div>
-                  </div>
-                  {% endif %}
-
-                </div>
-              </div>
-            </div>
-            {% endfor %}
-
-          </div>
-        </div>
-        
-        <div class="col-12 py-3 border-bottom border-primary">
-          <h3>Diatary Requirements and Food Allergies</h3>
-          <div class="accordion" id="requirements-accordion">
-
-            {% for item in requirements %}
-            <div class="card">
-              <div class="card-header" id="requirements-heading{{loop.index}}">
-                <h3 class="mb-0">
-                  <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#requirements-collapse{{loop.index}}" aria-expanded="false" aria-controls="requirements-collapse{{loop.index}}">
+                  <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#{{group.id}}-collapse{{loop.index}}" aria-expanded="false" aria-controls="{{group.id}}-collapse{{loop.index}}">
                   {{item.name}}
                   </button>
                 </h3>
               </div>
 
-              <div id="requirements-collapse{{loop.index}}" class="collapse" data-parent="#requirements-accordion">
+              <div id="{{group.id}}-collapse{{loop.index}}" class="collapse" data-parent="#{{group.id}}-accordion">
                 <div class="card-body p-2">
 
                   {% if item.recipes %}
@@ -217,23 +92,30 @@
                     {% for recipe in item.recipes %}
                     <div class="col-12 col-lg-6 p-1">
                       <a href="{{ url_for('display_recipe', recipe_id=recipe._id) }}">
-                        <div class="card bg-dark text-light d-flex align-items-end" style="height: 400px;">
+                        <div class="card bg-dark text-light d-flex align-items-end" style="height: 220px;">
                           <img src="{{ url_for('static', filename='img/{0}'.format(recipe.picture)) }}" class="card-img h-100 object-fit-cover" alt="picture of {{recipe.name}}">
-                          <div class="card-img-overlay overflow-auto align-items-start flex-column h-100 rounded">
-                            <div class="bg-darkglass p-2 text-wrap mb-auto ">
-                              <h2 class="card-title font-weight-bold">{{recipe.name}}</h2>
-                              <h3 class="card-text">by&nbsp;<span class="text-capitalize font-italic">{{ recipe.author }}</span></h3>
-                              <p class="card-text">{{ recipe.description }}</p>
+                          <div class="card-img-overlay overflow-auto align-items-start flex-column h-100 rounded p-0">
+                            <div class="bg-darkglass p-2 text-wrap mb-auto h-100 overflow-hidden">
+                              <h2 class="card-title font-weight-bold fs-20">{{recipe.name}}</h2>
+                              <h3 class="card-text fs-15">by&nbsp;<span class="text-capitalize font-italic">{{ recipe.author }}</span></h3>
+                              <p class="card-text"></p>
                             </div>
                           </div>
                         </div>
                       </a>
                     </div>
                     {% endfor %}
+                    {% if item.total_recipes %}
+                    <a href="{{item.url}}" class="btn btn-primary col-12">
+                      <span>View all recipes in {{item.name}}</span>
+                      <span class="badge badge-light">{{item.total_recipes}}</span>
+                      <span class="sr-only">Number of all recipes in {{group.heading}}</span>
+                    </a>
+                    {% endif %}
                   </div>
                   {% else %}
                   <div class="row d-flex justify-content-center">
-                    <div class="col-auto ">
+                    <div class="col-auto">
                       <div class="alert alert-primary" role="alert">
                         <h4 class="alert-heading">No Recipies!</h4>
                         <hr>
@@ -251,6 +133,126 @@
 
           </div>
         </div>
+        {% endfor %}
+        
+        <!--<div class="col-12 py-3 border-bottom border-primary">-->
+        <!--  <h3>Cuisines</h3>-->
+        <!--  <div class="accordion" id="cuisines-accordion">-->
+
+        <!--    {% for cuisine in cuisines %}-->
+        <!--    <div class="card">-->
+        <!--      <div class="card-header" id="cuisines-heading{{loop.index}}">-->
+        <!--        <h3 class="mb-0">-->
+        <!--          <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#cuisines-collapse{{loop.index}}" aria-expanded="false" aria-controls="cuisines-collapse{{loop.index}}">-->
+        <!--          {{cuisine.name}}-->
+        <!--          </button>-->
+        <!--        </h3>-->
+        <!--      </div>-->
+
+        <!--      <div id="cuisines-collapse{{loop.index}}" class="collapse" data-parent="#cuisines-accordion">-->
+        <!--        <div class="card-body p-2">-->
+
+        <!--          {% if cuisine.recipes %}-->
+        <!--          <div class="row p-1 d-flex flex-grow-1 align-content-center flex-wrap">-->
+        <!--            {% for recipe in cuisine.recipes %}-->
+        <!--            <div class="col-12 col-lg-6 p-1">-->
+        <!--              <a href="{{ url_for('display_recipe', recipe_id=recipe._id) }}">-->
+        <!--                <div class="card bg-dark text-light d-flex align-items-end" style="height: 400px;">-->
+        <!--                  <img src="{{ url_for('static', filename='img/{0}'.format(recipe.picture)) }}" class="card-img h-100 object-fit-cover" alt="picture of {{recipe.name}}">-->
+        <!--                  <div class="card-img-overlay overflow-auto align-items-start flex-column h-100 rounded">-->
+        <!--                    <div class="bg-darkglass p-2 text-wrap mb-auto ">-->
+        <!--                      <h2 class="card-title font-weight-bold fs-10">{{recipe.name}}</h2>-->
+        <!--                      <h3 class="card-text fs-10">by&nbsp;<span class="text-capitalize font-italic">{{ recipe.author }}</span></h3>-->
+        <!--                      <p class="card-text fs-8">{{ recipe.description }}</p>-->
+        <!--                    </div>-->
+        <!--                  </div>-->
+        <!--                </div>-->
+        <!--              </a>-->
+        <!--            </div>-->
+        <!--            {% endfor %}-->
+        <!--            <a href="{{url_for('recipes_by_cuisine', cuisine_id=cuisine.id)}}" class="btn btn-primary col-12">-->
+        <!--              <span>View all recipes in {{cuisine.name}}</span>-->
+        <!--              <span class="badge badge-light">{{cuisine.total_recipes}}</span>-->
+        <!--              <span class="sr-only">Number of recipes in cuisine</span>-->
+        <!--            </a>-->
+        <!--          </div>-->
+        <!--          {% else %}-->
+        <!--          <div class="row d-flex justify-content-center">-->
+        <!--            <div class="col-auto">-->
+        <!--              <div class="alert alert-primary" role="alert">-->
+        <!--                <h4 class="alert-heading">No Recipies!</h4>-->
+        <!--                <hr>-->
+        <!--                <p>Unfortunatlly there are no recipes marked as {{cuisine.name}} Cuisine. </p>-->
+        <!--                <p class="mb-0">You can add your recepie using <a href="{{ url_for('add_recipe') }}" class="badge badge-success">Add Recipe</a> button!</p>-->
+        <!--              </div>-->
+        <!--            </div>-->
+        <!--          </div>-->
+        <!--          {% endif %}-->
+
+        <!--        </div>-->
+        <!--      </div>-->
+        <!--    </div>-->
+        <!--    {% endfor %}-->
+
+        <!--  </div>-->
+        <!--</div>-->
+        
+        <!--<div class="col-12 py-3 border-bottom border-primary">-->
+        <!--  <h3>Diatary Requirements and Food Allergies</h3>-->
+        <!--  <div class="accordion" id="requirements-accordion">-->
+
+        <!--    {% for item in requirements %}-->
+        <!--    <div class="card">-->
+        <!--      <div class="card-header" id="requirements-heading{{loop.index}}">-->
+        <!--        <h3 class="mb-0">-->
+        <!--          <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#requirements-collapse{{loop.index}}" aria-expanded="false" aria-controls="requirements-collapse{{loop.index}}">-->
+        <!--          {{item.name}}-->
+        <!--          </button>-->
+        <!--        </h3>-->
+        <!--      </div>-->
+
+        <!--      <div id="requirements-collapse{{loop.index}}" class="collapse" data-parent="#requirements-accordion">-->
+        <!--        <div class="card-body p-2">-->
+
+        <!--          {% if item.recipes %}-->
+        <!--          <div class="row p-1 d-flex flex-grow-1 align-content-center flex-wrap ">-->
+        <!--            {% for recipe in item.recipes %}-->
+        <!--            <div class="col-12 col-lg-6 p-1">-->
+        <!--              <a href="{{ url_for('display_recipe', recipe_id=recipe._id) }}">-->
+        <!--                <div class="card bg-dark text-light d-flex align-items-end" style="height: 400px;">-->
+        <!--                  <img src="{{ url_for('static', filename='img/{0}'.format(recipe.picture)) }}" class="card-img h-100 object-fit-cover" alt="picture of {{recipe.name}}">-->
+        <!--                  <div class="card-img-overlay overflow-auto align-items-start flex-column h-100 rounded">-->
+        <!--                    <div class="bg-darkglass p-2 text-wrap mb-auto ">-->
+        <!--                      <h2 class="card-title font-weight-bold">{{recipe.name}}</h2>-->
+        <!--                      <h3 class="card-text">by&nbsp;<span class="text-capitalize font-italic">{{ recipe.author }}</span></h3>-->
+        <!--                      <p class="card-text">{{ recipe.description }}</p>-->
+        <!--                    </div>-->
+        <!--                  </div>-->
+        <!--                </div>-->
+        <!--              </a>-->
+        <!--            </div>-->
+        <!--            {% endfor %}-->
+        <!--          </div>-->
+        <!--          {% else %}-->
+        <!--          <div class="row d-flex justify-content-center">-->
+        <!--            <div class="col-auto ">-->
+        <!--              <div class="alert alert-primary" role="alert">-->
+        <!--                <h4 class="alert-heading">No Recipies!</h4>-->
+        <!--                <hr>-->
+        <!--                <p>Unfortunatlly there are no recipes marked as {{item.name}}. </p>-->
+        <!--                <p class="mb-0">You can add your recepie using <a href="{{ url_for('add_recipe') }}" class="badge badge-success">Add Recipe</a> button!</p>-->
+        <!--              </div>-->
+        <!--            </div>-->
+        <!--          </div>-->
+        <!--          {% endif %}-->
+
+        <!--        </div>-->
+        <!--      </div>-->
+        <!--    </div>-->
+        <!--    {% endfor %}-->
+
+        <!--  </div>-->
+        <!--</div>-->
         
       </div>
     </div>

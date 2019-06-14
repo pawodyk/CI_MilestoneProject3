@@ -19,8 +19,9 @@ mongo = PyMongo(app)
 
 
 """GLOBAL VARIABLES"""
-page_title = os.getenv("PAGE_TITLE", "Open Cookbook")
-ALLOWED_EXTENSIONS = set(['jpg', 'jpeg', 'png'])
+page_title = os.getenv("PAGE_TITLE", "Open Cookbook") ## defines the title of the page
+ALLOWED_EXTENSIONS = set(['jpg', 'jpeg', 'png']) ## defines extensions that are permited
+dashboard_display_limit = 6 ## determines how many recipes are displayed in each section on the dashboard
 
 units = ["g", "mg","kg","ml","l","tsp","tbsp","cup","glass","whole","half","quater","slice"]
 # aceptable_sort_types = ['newest', 'oldest', 'views', 'revies', 'score']
@@ -72,17 +73,19 @@ def inject_cuisnes():
 """render home page, set up the data used in the carauses and dashboard generation"""
 @app.route("/")
 def home():
-    top_recipes = [recipe for recipe in mongo.db.recipes.find().sort('views', -1).limit(5)]
+    ### pull the top 5 recipes to display in the carusel 
+    top_recipes = [recipe for recipe in mongo.db.recipes.find().sort([('reviews.score', -1), ('views', -1)]).limit(5)]
     
-    display_limit = 6
+    ## create lists for categories and cuisines
+    categories = [category for category in mongo.db.categories.find()]
+    cuisines = [cuisine for cuisine in mongo.db.cuisines.find()]
     
-    categories = mongo.db.categories.find()
-    cuisines = mongo.db.cuisines.find()
-    
+    dashboard_list = []
     categories_list = []
     cuisines_list = []
     requirements_list = []
     
+    """
     for category in categories:
         category_name = category['name']
         category_id = category['_id']
@@ -108,13 +111,49 @@ def home():
     requirements_list.append({'name': 'Vegiterian', 'recipes': vegiterian})
     requirements_list.append({'name': 'Lactose Free', 'recipes': lactosefree})
     requirements_list.append({'name': 'Gluten Free', 'recipes': glutenfree})
+    """
+    
+    dashboard_list.append({'id': 'categories', 'heading': 'Categories', 'search_key': 'category', 'list': categories})
+    dashboard_list.append({'id': 'cuisines','heading': 'Cuisines', 'search_key': 'cuisine', 'list': cuisines})
+    
+    
+    for outer in dashboard_list:
+        items_list = []
+        for inner in outer['list']:
+            item_name = inner['name']
+            item_id = inner['_id']
+            item_url = "/recipes/filterby/{0}/{1}".format(outer['search_key'], item_id)
+            
+            recipes_list = [ recipe for recipe in mongo.db.recipes.find( 
+                {outer['search_key']: str(item_id)},                           
+                {'name', 'author', 'description', 'picture', '_id', 'views'}    ##extracts only values that are needed by the dashboard
+            )
+            .sort('views', -1)                                                  ## sorts the recipes by views
+            .limit(dashboard_display_limit) ]                                   ## limit the number of recipes to be displyed
+            
+            
+            recipes_count = mongo.db.recipes.find( {outer['search_key']: str(item_id)} ).count() ## counts total number of recipes
+            
+            items_list.append( {'id': item_id, 'name': item_name, 'url': item_url, 'recipes': recipes_list, 'total_recipes': recipes_count} )
+            
+        outer['list'] = items_list ## change the list to updated data list
+            
+    
+        
+    vegiterian = [ r for r in mongo.db.recipes.find({'is_vegiterian': True}, {'name', 'author', 'description', 'picture', '_id', 'views'}).sort('views', -1).limit(dashboard_display_limit) ]
+    lactosefree = [ r for r in mongo.db.recipes.find({'is_lactose_free': True}, {'name', 'author', 'description', 'picture', '_id', 'views'}).sort('views', -1).limit(dashboard_display_limit) ]
+    glutenfree = [ r for r in mongo.db.recipes.find({'is_gluten_free': True}, {'name', 'author', 'description', 'picture', '_id', 'views'}).sort('views', -1).limit(dashboard_display_limit) ]
+    
+    requirements_list.append({'name': 'Vegiterian', 'recipes': vegiterian})
+    requirements_list.append({'name': 'Lactose Free', 'recipes': lactosefree})
+    requirements_list.append({'name': 'Gluten Free', 'recipes': glutenfree})
+    
+    dashboard_list.append({'heading': 'Diatary Requirements and Food Allergies', 'list': requirements_list})
     
     return render_template('index.html', 
                             title=page_title,
                             top_recipes=top_recipes,
-                            categories=categories_list,
-                            cuisines=cuisines_list,
-                            requirements=requirements_list)
+                            dashboard=dashboard_list)
 
 
 """renders the list of all the recipes"""
