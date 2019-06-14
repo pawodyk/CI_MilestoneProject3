@@ -81,11 +81,7 @@ def home():
                             cuisines=cuisines_list,
                             requirements=requirements_list)
 
-
-@app.route("/recipes")
-def recipes():
-    sort = request.args.get('sort', ' views')
-    print(sort)
+def sort_method(sort):
     
     sort_type = 'views'
     sort_order = -1
@@ -102,12 +98,19 @@ def recipes():
         elif sort == 'score':
             sort_type = 'reviews.avg_score'
             sort_order = -1
+            
+    return [sort_type, sort_order]
+
+@app.route("/recipes")
+def recipes():
+    sort = sort_method(request.args.get('sort', ' views'))
     
-    recipes = mongo.db.recipes.find().sort(sort_type, sort_order)
+    recipes = mongo.db.recipes.find().sort(sort[0], sort[1])
     recipes_list = [recipe for recipe in recipes]
     
+    print("sort:", sort)
     for recipe in recipes_list:
-        print(recipe['name'], recipe['reviews']['total_number'], recipe['reviews']['avg_score'])
+        print(recipe['name'] + "\t:", recipe['views'], recipe['created_on'].strftime('%d/%m/%Y'), recipe['reviews']['total_number'], recipe['reviews']['avg_score'])
     
     return render_template('recipes.html', 
                             title='%s | Recipes' % page_title,
@@ -116,11 +119,17 @@ def recipes():
                             
 @app.route("/recipes/filterby/category/<category_id>")
 def recipes_by_category(category_id):
-    recipes = mongo.db.recipes.find({'category': category_id})
+    sort = sort_method(request.args.get('sort', ' views'))
+    
+    recipes = mongo.db.recipes.find({'category': category_id}).sort(sort[0], sort[1])
     category = mongo.db.categories.find_one({'_id': ObjectId(category_id)})
     category_name = category['name']
     
     recipes_list = [recipe for recipe in recipes]
+    
+    print("sort:", sort)
+    for recipe in recipes_list:
+        print(recipe['name'] + "\t:", recipe['views'], recipe['created_on'].strftime('%d/%m/%Y'), recipe['reviews']['total_number'], recipe['reviews']['avg_score'])
     
     return render_template('recipes.html', 
                             title='{0} | Recipes for {1}'.format(page_title, category_name),
@@ -130,11 +139,17 @@ def recipes_by_category(category_id):
 
 @app.route("/recipes/filterby/cuisine/<cuisine_id>")
 def recipes_by_cuisine(cuisine_id):
-    recipes = mongo.db.recipes.find({'cuisine': cuisine_id})
+    sort = sort_method(request.args.get('sort', ' views'))
+    
+    recipes = mongo.db.recipes.find({'cuisine': cuisine_id}).sort(sort[0], sort[1])
     cuisine = mongo.db.cuisines.find_one({'_id': ObjectId(cuisine_id)})
     cuisine_name = cuisine['name']
     
     recipes_list = [recipe for recipe in recipes]
+    
+    print("sort:", sort)
+    for recipe in recipes_list:
+        print(recipe['name'] + "\t:", recipe['views'], recipe['created_on'].strftime('%d/%m/%Y'), recipe['reviews']['total_number'], recipe['reviews']['avg_score'])
     
     return render_template('recipes.html', 
                             title='{0} | Recipes from {1} Cuisine'.format(page_title, cuisine_name),
@@ -142,27 +157,19 @@ def recipes_by_cuisine(cuisine_id):
                             recipes_list=recipes_list)
 
 
-app.route("/recipes/filterby/cuisine/<cuisine_id>")
-def recipes_by_cuisine(cuisine_id):
-    recipes = mongo.db.recipes.find({'cuisine': cuisine_id})
-    cuisine = mongo.db.cuisines.find_one({'_id': ObjectId(cuisine_id)})
-    cuisine_name = cuisine['name']
-    
-    print(sort_method)
-    
-    recipes_list = [recipe for recipe in recipes]
-    
-    return render_template('recipes.html', 
-                            title='{0} | Recipes from {1} Cuisine'.format(page_title, cuisine_name),
-                            cuisine_name=cuisine_name,
-                            recipes_list=recipes_list)
-
-@app.route("/recipes/search", methods=["GET", "POST"])
+@app.route("/recipes/search", methods=["POST"])
 def search_post():
-    results = []
     query = request.form['query'].lower()
     
-    search_list = mongo.db.recipes.find({}, {'_id' ,'name', 'description', 'author', 'picture'})
+    return redirect(url_for('search', query=query))
+    
+@app.route("/recipes/search/<query>")
+def search(query):
+    sort = sort_method(request.args.get('sort', ' views'))
+    
+    results = []
+    
+    search_list = mongo.db.recipes.find().sort(sort[0], sort[1])
     
     for item in search_list:
         found = False
@@ -259,11 +266,11 @@ def display_recipe(recipe_id):
     recipe['category_name'] = category['name']
     
     timestamp = recipe['created_on']
-    recipe['created_on_str'] = timestamp.strftime('%m/%d/%Y')
+    recipe['created_on_str'] = timestamp.strftime('%d/%m/%Y')
         
     if 'modified_on' in recipe:
         timestamp = recipe['modified_on']
-        recipe['modified_on_str'] = timestamp.strftime('%m/%d/%Y') #('%m/%d/%Y %H:%M')
+        recipe['modified_on_str'] = timestamp.strftime('%d/%m/%Y') #('%d/%m/%Y %H:%M')
     
     """ Simple proces for verifing that this is an unique visit in this session """
     if not session: 
