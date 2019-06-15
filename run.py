@@ -11,7 +11,7 @@ from werkzeug.utils import secure_filename
 app = Flask(__name__)
 app.config["MONGO_DBNAME"] = os.getenv('MONGO_DBNAME', 'cookbook')
 app.config["MONGO_URI"] = os.getenv('MONGO_URI', 'mongodb://localhost:27017/cookbook')
-app.config['UPLOAD_FOLDER'] = os.getenv('UPLOAD_FOLDER', '/static/img')
+app.config['UPLOAD_FOLDER'] = os.getenv('UPLOAD_FOLDER', './/static//img')
 app.config['MAX_CONTENT_LENGTH'] = 512 * 1024 ## since i do not use any compression I decided to decrease the aceptable image size to 0.5 Mb
 app.secret_key = os.getenv("SECRET_KEY", "fallbacksecretvalue123")
 
