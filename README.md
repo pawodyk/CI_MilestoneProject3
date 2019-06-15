@@ -6,7 +6,7 @@
 
 ***Open Cookbook*** is a data-driven web application, designed to allow user to freely access and store recipes online. It provides clean and consistent design allowing user to easily navigate the website and access all of its functionality.  
 
-The site uses the python flask framework and heavy relies on flask templating system. All the data on the site is pulled from MongoDB database and rendered using templates and jinja. Pictures are stored directly on the server to ensure they are always available[*](). Styling of the website was  
+The site uses the python flask framework and heavy relies on flask templating system. All the data on the site is pulled from MongoDB database and rendered using templates and jinja. Pictures are stored directly on the server to ensure they are always available[*](#hrokufilesystem). Styling of the website was  
 
 Note: ***The Recipes added to the database are for demonstrational purposes only***. 
 Please note that recipes could have missing ingredients or steps, and keep in mind that some data was modified during testing, especially the **food allergies**  **DO NOT** contain actual food allergies information.
@@ -194,7 +194,7 @@ This website was designed with this Users in mind:
 
 - **Deletion of unused images** - at the moment when the data is removed it is deleted from the database only and do not delete file from the server. All the data has to be manually deleted. Automating this process would be of most importance to prevent server storage space from being overwhelmed by the files.
 
-- **Images storage on separate file server** - At this time the website uses storage on the heroku server for files. The Heroku server uses [ephemeral filesystem](https://help.heroku.com/K1PPS2WM/why-are-my-file-uploads-missing-deleted) so the files would not be permanently stored. This is acceptable for purposes of this project but for full usability it needs to implement use of external file storage server.
+- **<span id="hrokufilesystem">Images storage on separate file server</span>** - At this time the website uses storage on the heroku server for files. The Heroku server uses [ephemeral filesystem](https://help.heroku.com/K1PPS2WM/why-are-my-file-uploads-missing-deleted) so the files would not be permanently stored. This is acceptable for purposes of this project but for full usability it needs to implement use of external file storage server.
 
 <hr>
 
@@ -243,12 +243,13 @@ All testing was completed manually
 ### Testing Process
 
 1. Testing Responsive Design at screen sizes between 
+    
     1. Testing Home Page
         - Testing Carousel scaling with the screen size
         - Testing Menu element 
         - Testing the elements in the accordion element scaling
     
-    2. Moving to the Recipes site, 
+    2. Moving to the Recipes site
         - Testing recipes cards
         - Testing sort button dropdown
 
@@ -275,8 +276,161 @@ All testing was completed manually
     - No problems with page scaling, which is mostly based on bootstrap. The problem with the overflowing label should be easy to fix and the problem with reviews is unrelated to responsive design.
 
 
+2. Testing Carousel on the home page
+    
+    1. The five recipes on the home page were checked against mongodb which confirm the correct recipes are being displayed
+    
+    2. The buttons for next and previous recipe were tested
+    
+    3. Buttons under carousel label were tested
+
+    4. Testing does clicking on the carousel link to the recipe
+
+    - No problems with the carouse were detected.
+
+
+3. Testing Dashboard.
+
+    1. Tested arrow pointer to the dashboard (under the *View all recipes* button)
+
+    2. Tested opening and closing of accordion element for each Category, Cuisine and each group from the Dietary Requirements.
+
+    3. Tested Does the link to recipe in each group works as expected (tested two per grouping)
+
+    4. Tested *View all recipes in the group* button. and confirmed that the amount of recipes beside indicate total amount of recipes
+
+    5. Tested does the *add recipe* button in the alert box that appears when there are no recipes) works as expected. Also Tested couple of empty groups against the database to see are they accurate
+        ```
+        > db.recipes.find({},{'_id':0,'category':1})
+        { "category" : "5cfecd091c9d440000d4649d" }
+        { "category" : "5cfecc7b1c9d440000d46499" }
+        { "category" : "5cfecd091c9d440000d4649d" }
+        { "category" : "5cfecd091c9d440000d4649d" }
+        { "category" : "5cfecd091c9d440000d4649d" }
+        { "category" : "5cfecc611c9d440000d46498" }
+        { "category" : "5cfecd141c9d440000d4649e" }
+        > db.categories.find()
+        { "_id" : ObjectId("5cfecc611c9d440000d46498"), "name" : "Breakfast" }
+        { "_id" : ObjectId("5cfecc7b1c9d440000d46499"), "name" : "Lunch" }
+        { "_id" : ObjectId("5cfecc961c9d440000d4649a"), "name" : "Dinner" }
+        { "_id" : ObjectId("5cfeccaa1c9d440000d4649b"), "name" : "Dessert" }
+        { "_id" : ObjectId("5cfeccba1c9d440000d4649c"), "name" : "Starter" }
+        { "_id" : ObjectId("5cfecd091c9d440000d4649d"), "name" : "Main" }
+        { "_id" : ObjectId("5cfecd141c9d440000d4649e"), "name" : "Beverage" }
+        { "_id" : ObjectId("5cfecd9a1c9d440000d464a0"), "name" : "Salad" }
+        ```
+
+    - Dashboard is working correctly and all the links seems to point to right recipes. 
+
+
+4. Testing the All recipes view
+    
+    1. Tested 3 links to recipes, confirmed that they point to the right recipe.
+
+    2. Tested sorting button for different views against the database using the following commands and comparing them with the results on the page
+        ```
+        > r = cookbook.recipes
+        > r.find({}, {"_id":0, "name":1, "views":1}).sort({"views":-1})
+        { "name" : "The new Spaghetti Carbonara recipe",                "views" : 25 }
+        { "name" : "Ultimate spaghetti carbonara recipe",               "views" : 23 }
+        { "name" : "The Best Spaghetti Bolognese Recipe",               "views" : 15 }
+        { "name" : "Home-Style Chicken Curry",                          "views" : 10 }
+        { "name" : "Singapore Noodles",                                 "views" : 8 }
+        { "name" : "Sandwich With Eggs",                                "views" : 4 }
+        { "name" : "Test the recipe with the Empty File Upload field",  "views" : 4 }
+        > r.find({}, {"_id":0, "name":1, "created_on":1}).sort({"created_on":-1})
+        { "name" : "Test the recipe with ...",  "created_on" : ISODate("2019-06-14T23:06:27.917Z") }
+        { "name" : "Sandwich With Eggs",        "created_on" : ISODate("2019-06-14T22:42:36.054Z") }
+        { "name" : "Ultimate spaghetti ...",    "created_on" : ISODate("2019-06-12T15:07:11.382Z") }
+        { "name" : "Singapore Noodles",         "created_on" : ISODate("2019-04-12T20:07:11.382Z") }
+        { "name" : "The Best Spaghetti ...",    "created_on" : ISODate("2019-03-12T20:07:11.382Z") }
+        { "name" : "Home-Style Chicken ...",    "created_on" : ISODate("2018-06-12T20:07:11.382Z") }
+        { "name" : "The new Spaghetti ...",     "created_on" : ISODate("2018-01-10T20:07:11.382Z") }
+        r.find({}, {"_id":0, "name":1, "reviews.total_number":1}).sort({"reviews.total_number":-1})
+        { "name" : "Ultimate spaghetti ...",    "reviews" : { "total_number" : 3 } }
+        { "name" : "The new Spaghetti ...",     "reviews" : { "total_number" : 1 } }
+        { "name" : "The Best Spaghetti ...",    "reviews" : { "total_number" : 0 } }
+        { "name" : "Singapore Noodles",         "reviews" : { "total_number" : 0 } }
+        { "name" : "Home-Style Chicken Curry",  "reviews" : { "total_number" : 0 } }
+        { "name" : "Sandwich With Eggs",        "reviews" : { "total_number" : 0 } }
+        { "name" : "Test the recipe ...",       "reviews" : { "total_number" : 0 } }
+        r.find({}, {"_id":0, "name":1, "reviews.avg_score":1}).sort({"reviews.avg_score":-1})
+        { "name" : "Ultimate spaghetti ...",    "reviews" : { "avg_score" : 5 } }
+        { "name" : "The new Spaghetti ...",     "reviews" : { "avg_score" : 5 } }
+        { "name" : "The Best Spaghetti ...",    "reviews" : { "avg_score" : 0 } }
+        { "name" : "Singapore Noodles",         "reviews" : { "avg_score" : 0 } }
+        { "name" : "Home-Style Chicken ...",    "reviews" : { "avg_score" : 0 } }
+        { "name" : "Sandwich With Eggs",        "reviews" : { "avg_score" : 0 } }
+        { "name" : "Test the recipe with...",   "reviews" : { "avg_score" : 0 } }
+        ```
+    3. Tested the Add recipe page is pointing to correct page
+
+    - All tests passed
+
+5. Testing Adding Recipes
+
+    1. Added recipe with image
+
+    2. Attempt submit the form with empty fields
+
+    3. Attempt removing first step, and first ingredient
+    
+    4. Added recipe without image
+
+    5. Testing entering the text into numeric fields (Preperation time, servings Calories, Amount)
+
+    - All test were passed, in case of submitting the form without the image the default image was chosen. And the form did not accept neither empty fields or text data in the numeric fields, highlighting the fields correctly.
+
+6. Testing Editing the recipe
+    
+    1. Modify each field and click the checkbooks
+
+    2. Attempt adding the new steps and new ingredients
+
+    3. Submit the change
+
+    - changes are represented on the recipe and in the database
+    ```
+    > r.find({"_id":ObjectId("5d054ad29e4274a87be6ed66")})
+    { "_id" : ObjectId("5d054ad29e4274a87be6ed66"), "name" : "Test", "author" : "Test", "description" : "Test", "prep_time" : "1", "servings" : "2", "calories" : "3", "cuisine" : "5cfecbd01c9d440000d46497", "category" : "5cfecd9a1c9d440000d464a0", "is_vegiterian" : false, "is_lactose_free" : false, "is_gluten_free" : false, "ingredients" : [ { "ingredient_name" : "first ingredient", "ingredient_amount" : "500", "ingredient_unit" : "quater" }, { "ingredient_name" : "second ingredient", "ingredient_amount" : "100", "ingredient_unit" : "glass" }, { "ingredient_name" : "third ingredient", "ingredient_amount" : "200", "ingredient_unit" : "tsp" } ], "preperation" : [ "Step One" ], "views" : 1, "created_on" : ISODate("2019-06-15T19:45:22.795Z"), "reviews" : { "avg_score" : 0, "total_number" : 0, "reviews" : [ ] }, "picture" : "default.jpg" }
+    > r.find({"_id":ObjectId("5d054ad29e4274a87be6ed66")})
+    { "_id" : ObjectId("5d054ad29e4274a87be6ed66"), "name" : "None", "author" : "None", "description" : "None", "prep_time" : "10", "servings" : "20", "calories" : "30", "cuisine" : "5cfecba61c9d440000d46494", "category" : "5cfeccba1c9d440000d4649c", "is_vegiterian" : true, "is_lactose_free" : true, "is_gluten_free" : true, "ingredients" : [ { "ingredient_name" : "first None", "ingredient_amount" : "500", "ingredient_unit" : "quater" }, { "ingredient_name" : "second None", "ingredient_amount" : "100", "ingredient_unit" : "glass" } ], "preperation" : [ "Step None" ], "views" : 1, "created_on" : ISODate("2019-06-15T19:45:22.795Z"), "reviews" : { "avg_score" : 0, "total_number" : 0, "reviews" : [ ] }, "picture" : "default.jpg", "modified_on" : ISODate("2019-06-15T19:47:18.022Z") }
+    ```
+
+7. Testing Removing the recipe
+
+    1. Press delete the recipe but then press cancel
+
+    2. Completely deleting the recipe
+
+    - deletion works as expected permanently removing the data from the database
+
+8. Testing adding review
+
+    1. testing adding review 
+
+    - the test failed the application seems to be adding the last review as a new review with exactly the same date, probable cause is that I made a mistake in passing the value of the previous recipe instead of the one acquired from a website form.
+    ```
+    > r.find({"_id":ObjectId("5d0546399e4274a87be6ed64")}, {"_id":0, "reviews":1})
+    { "reviews" : { "avg_score" : 5, "total_number" : 3, "reviews" : [ { "name" : "test", "rating" : "5", "description" : "test", "date" : ISODate("2019-06-15T19:31:44.877Z") }, { "name" : "test", "rating" : "5", "description" : "test", "date" : ISODate("2019-06-15T19:31:44.877Z") }, { "name" : "test", "rating" : "5", "description" : "test", "date" : ISODate("2019-06-15T19:31:44.877Z") } ] } }
+    ```
+
+8. Testing the navigation bar
+    
+    1. Tested home and logo links points to index page
+
+    2. Tested that the categories and cuisines links point to filtered view
+
+    3. Tested the search functionality by searching author, full name of the recipe, part of the recipe name and some string from the description
+
+    4. While on the search page I confirmed that the sorting is working on this page as well
+
+    - Everything is working as expected
+
 
 ### Testing Conclusion
+
+    
 
 <hr>
 
