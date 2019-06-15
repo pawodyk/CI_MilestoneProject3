@@ -430,7 +430,15 @@ All testing was completed manually
 
 ### Testing Conclusion
 
+    I completed the test and found only one major bug/issue. I have reviewed my code and the problem appears to comefrom using the same name during the itteration of the for loop as the variable I was passing to the pymongo query. This caused the last review to be always added to the database. Which would explain why I was able to add the new review when there was none and then when trying to add the new one the bug would happend. 
     
+    In relation to the minor issue of the text of the file label overflowing outside the element, I decided to use the bootstrap *text-truncate* to prevent it.
+    
+    This concluded my tests upon updating the run.py file the issue with the duplicating reviews was solved. as shown below:
+    ```
+    > r.find({"_id":ObjectId("5d0546399e4274a87be6ed64")}, {"_id":0, "reviews":1})
+    { "reviews" : { "avg_score" : 4, "total_number" : 4, "reviews" : [ { "name" : "test", "rating" : "5", "description" : "test", "date" : ISODate("2019-06-15T19:31:44.877Z") }, { "name" : "test", "rating" : "5", "description" : "test", "date" : ISODate("2019-06-15T19:31:44.877Z") }, { "name" : "test", "rating" : "5", "description" : "test", "date" : ISODate("2019-06-15T19:31:44.877Z") }, { "rating" : "1", "name" : "Pawel", "description" : "Some short message", "date" : ISODate("2019-06-15T19:58:50.663Z") } ] } }
+    ```
 
 <hr>
 
