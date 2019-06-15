@@ -120,7 +120,7 @@ def home():
     requirements_list.append({'name': 'Lactose Free', 'recipes': lactosefree})
     requirements_list.append({'name': 'Gluten Free', 'recipes': glutenfree})
     
-    dashboard_list.append({'heading': 'Diatary Requirements and Food Allergies', 'list': requirements_list})
+    dashboard_list.append({'heading': 'Dietary Requirements and Food Allergies', 'list': requirements_list})
     
     return render_template('index.html', 
                             title=page_title,
@@ -342,17 +342,22 @@ def display_recipe(recipe_id):
 """handles the process of posting the review"""
 @app.route("/recipe/<recipe_id>/review/post", methods=["POST"])
 def review_recipe_post(recipe_id):
-    review = request.form.to_dict()
-    review['date'] = dt.utcnow()
+    
+    new_review = request.form.to_dict()
+    new_review['date'] = dt.utcnow()
     
     all_reviews = mongo.db.recipes.find_one({'_id': ObjectId(recipe_id)}, {'reviews'})
     
+    ## update the current number of reviews
     size = len(all_reviews['reviews']['reviews']) + 1
-    score = 0
+    
+    ## update the avg score
+    score = int(new_review['rating'])
     for review in all_reviews['reviews']['reviews']:
         score += int(review['rating'])
-        
-    score = (score + int(review['rating'])) // size
+    
+    ## get the average score
+    score = round((score) / size)
     
     mongo.db.recipes.update_one(
         {'_id': ObjectId(recipe_id)},
@@ -363,7 +368,7 @@ def review_recipe_post(recipe_id):
             },
                 
             '$push': { 
-                'reviews.reviews': review ##push the review to the list
+                'reviews.reviews': new_review ##push the review to the list
             }
         }
     )

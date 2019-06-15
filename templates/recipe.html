@@ -158,27 +158,35 @@
       <button type="button" class="btn btn-success py-2" data-toggle="modal" data-target="#reviewModal">Leave a review <i class="fas fa-clipboard-list fa-lg"></i></button>
     </div>
   </div>
+  
   <!-- Modal -->
   <div class="modal fade" id="reviewModal" tabindex="-1" role="dialog" aria-labelledby="reviewModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
+        
+        <!--modal header-->
         <div class="modal-header">
           <h5 class="modal-title" id="reviewModalLabel">Review for the:<br> <span class="text-italic px-2">"{{ recipe.name }}"</span></h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
+        
         <!--Review Form-->
         <form name="review" method="POST" action="{{ url_for('review_recipe_post', recipe_id=recipe._id) }}">
+          
+          <!--modal body-->
           <div class="modal-body">
             <div class="container-fluid">
               <div class="row">
+                <!--name-->
                 <div class="col-6">
                   <div class="form-group">
                     <input type="text" class="form-control" id="reviewer_name" name="name" placeholder="Your Name" required>
                   </div>
                 </div>
-
+                
+                <!--rating-->
                 <div class="col-6 h-100">
                   <div id="rating_block" class="d-flex flex-nowrap align-items-center">
                     <span id="rate1" class="spoon text-primary"> <i class="fas fa-utensil-spoon "></i> </span>
@@ -189,20 +197,26 @@
                     <input type="number" id="rating_counter" name="rating" value=5 hidden>
                   </div>
                 </div>
+                
+                <!--description-->
                 <div class="col-12">
                   <textarea class="form-control w-100" name="description" rows=3 placeholder="Short review (max: 500 letters)" maxlength="500"></textarea>
                 </div>
               </div>
             </div>
           </div>
+          
+          <!--modla footer-->
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
             <button type="submit" class="btn btn-success">Done!</button>
           </div>
         </form>
-
+        <!--end form-->
       </div>
     </div>
   </div>
+  <!--end modal-->
+  
 </main>
 {% endblock %}
