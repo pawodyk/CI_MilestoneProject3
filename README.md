@@ -448,6 +448,14 @@ The app is deployed on heroku server under: http://open-cookbook-milestone.herok
 
 ### System Variables
 
+- **IP** - specifiy the IP address used by the flask application 
+
+    Defaults to 127.0.0.1
+    
+- **PORT** - specifiy the port used by the application
+
+  Defaults to 5000
+
 - **MONGO_URI** - holds the link to your local (or remote) instance of mongo database. 
 
     Defaults to local server MongoDB `'mongodb://localhost:27017/cookbook'`
@@ -527,13 +535,16 @@ Install required packages from requirements.txt file with command:
 sudo pip install -r requirements.txt 
 ```
 
-Once the required packages and their requirements are installed you need to add following global variables to your system as specified in the above section System Variables.
+Once the required packages and their requirements are installed you need to add global variables to your system as specified in the above section System Variables.
 
 Run the application 
 ```
 python run.py
 ```
-     
+
+By default the application will use the 127.0.0.1:5000 callback address, unless specified otherwise in the global variables.  
+
+
 <hr>
 
 
